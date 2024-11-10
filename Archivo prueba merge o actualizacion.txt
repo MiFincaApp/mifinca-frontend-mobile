@@ -1,2 +1,0 @@
-Hola a todos este es una archivo para que prueben como hacer un merge o actualizacion de la rama main a la rama local
- en caso de que halla crecido la rama o sea se halla aceptado otros pull request de otros programadores.
