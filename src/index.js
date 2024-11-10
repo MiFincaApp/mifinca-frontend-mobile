@@ -9,6 +9,7 @@ root.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
+  //linea de prueba para git y github
 );
 
 // If you want to start measuring performance in your app, pass a function
