@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { StyleSheet, TextInput, Button, View, Image} from "react-native";
 
+//Esta funsion
 export default function RegisterScreen() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  //Esta funcion maneja el envio del formulario al hacer click
   const handleRegister = () => {
     console.log("Usuario registrado", { username, email, password });
     setUsername("");
