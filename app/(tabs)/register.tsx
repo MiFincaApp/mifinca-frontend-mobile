@@ -7,6 +7,8 @@ export default function RegisterScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  
+
   //Esta funcion maneja el envio del formulario al hacer click
   const handleRegister = () => {
     console.log("Usuario registrado", { username, email, password });
@@ -19,6 +21,7 @@ export default function RegisterScreen() {
     <View style={styles.container}>
       <Image
         source={require("@/assets/images/LogoMiFinca.png")}
+      
         style={styles.logo}
       />
 

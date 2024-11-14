@@ -35,6 +35,10 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="register" options={{ title: "Registrar" }} />
+        <Stack.Screen
+          name="frecuentQuestion"
+          options={{ title: "Preguntas frecuentes" }}
+        />
         <Stack.Screen name="+not-found" />
       </Stack>
     </ThemeProvider>
