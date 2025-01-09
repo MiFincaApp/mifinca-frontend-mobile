@@ -88,6 +88,20 @@ export default function TabLayout() {
             ),
           }}
           />
+
+          {/* pantalla 6 - catalogo de productos */} //esto es codigo prueba de freyman no borrar
+          <Tabs.Screen
+            name="catalogo"
+            options={{
+              title: "catalogo",
+              tabBarIcon: ({ color, focused }) => (
+                <TabBarIcon
+                  name={focused ? "list" : "list-outline"}
+                  color={color}
+                />
+              ),
+            }}
+            />
       </Tabs>
     </>
   );
