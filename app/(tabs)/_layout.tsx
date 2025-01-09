@@ -74,6 +74,20 @@ export default function TabLayout() {
             ),
           }}
         />
+
+        {/* pantalla 5 - metodos de pago */}   
+        <Tabs.Screen                                                                      //esto es codigo prueba de freyman no borrar
+          name="metododepago"
+          options={{
+            title: "metododepago",
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon
+                name={focused ? "cash" : "cash-outline"}
+                color={color}
+              />
+            ),
+          }}
+          />
       </Tabs>
     </>
   );
