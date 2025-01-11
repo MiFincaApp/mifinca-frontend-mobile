@@ -102,6 +102,20 @@ export default function TabLayout() {
               ),
             }}
             />
+
+            {/* pantalla 7 - buscar */}
+            <Tabs.Screen
+              name="buscar"
+              options={{
+                title: "buscar",
+                tabBarIcon: ({ color, focused }) => (
+                  <TabBarIcon
+                    name={focused ? "search" : "search-outline"}
+                    color={color}
+                  />
+                ),
+              }}
+              />
       </Tabs>
     </>
   );

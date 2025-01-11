@@ -8,7 +8,7 @@ const iconpse = require('@/assets/images/pse.png');
 const iconbbva = require('@/assets/images/bbva.png');
 const iconbancolombia = require('@/assets/images/bancolombia.png');
 const iconnequi = require('@/assets/images/nequi.jpg');
-const icon = require('@/assets/images/LogoMiFinca.png');
+const icon = require('@/assets/images/logo.png');
 
 const PaymentMethodsScreen = () => {
   return (
@@ -121,3 +121,4 @@ export default PaymentMethodsScreen;
 
 
 
+//interface de freyman #1

@@ -1,21 +1,13 @@
 import React from "react";
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-} from "react-native";
+import {View,Text,Image,TouchableOpacity,StyleSheet,ScrollView,} from "react-native";
 
 const icon = require('@/assets/images/logo.png');
-const banner = require('@/assets/images/fondo.png');
-const papa = require ('@/assets/images/papa.png');
-const papaya = require ('@/assets/images/papaya.png');
-const yuca = require ('@/assets/images/yuca.png');
-const aguacate = require ('@/assets/images/aguacate.png');
-const tomate = require ('@/assets/images/tomate.png');
-const zanahoria = require ('@/assets/images/zanahoria.png');
+const tomatepera = require ('@/assets/images/tomatepera.jpeg');
+const tomatecherry = require ('@/assets/images/tomatecherry.jpeg');
+const tomateraf = require ('@/assets/images/tomateraf.jpeg');
+const tomateverde = require ('@/assets/images/tomateverde.jpeg');
+const tomatedearbol = require ('@/assets/images/tomatedearbol.jpeg');
+const tomatebuey = require ('@/assets/images/tomatebuey.jpeg');
 
 const PaymentMethodsScreen = () => {
   return (
@@ -31,46 +23,50 @@ const PaymentMethodsScreen = () => {
         </View>
       </View>
 
-      {/* Banner */}
-      <Image source={banner} style={styles.banner} />
-
       {/* Catálogo */}
-      <View style={styles.catalogo}>
+      <View style={styles.buscar}>
+        <Text >Buscar producto</Text>
         {/* Fila 1 */}
         <View style={styles.row}>
           <TouchableOpacity style={styles.producto}>
-            <Image source={papa} style={styles.imagen} />
-            <Text style={styles.nombre}>Papa</Text>
-            <Text style={styles.precio}>Bulto $35.000</Text>
+            <Image source={tomatepera} style={styles.imagen} />
+            <Text style={styles.nombre}>Tomate pera</Text>
+            <Text style={styles.precio}>Precio por kilo 3000</Text>
+            <Text style={styles.precio}>Lugar de procedencia: Pamplona</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.producto}>
-            <Image source={papaya} style={styles.imagen} />
-            <Text style={styles.nombre}>Papaya</Text>
-            <Text style={styles.precio}>Canasta $12.000</Text>
+            <Image source={tomatecherry} style={styles.imagen} />
+            <Text style={styles.nombre}>Tomate Cherry</Text>
+            <Text style={styles.precio}>Precio por kilo $2.900</Text>
+            <Text style={styles.precio}>Lugar de procedencia: Tibú</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.producto}>
-            <Image source={yuca} style={styles.imagen} />
-            <Text style={styles.nombre}>Yuca</Text>
-            <Text style={styles.precio}>Bulto $25.000</Text>
+            <Image source={tomateraf} style={styles.imagen} />
+            <Text style={styles.nombre}>Tomate Raf</Text>
+            <Text style={styles.precio}>Precio por Kilo $2.500</Text>
+            <Text style={styles.precio}>Lugar de procedencia: Durania</Text>
           </TouchableOpacity>
         </View>
 
         {/* Fila 2 */}
         <View style={styles.row}>
           <TouchableOpacity style={styles.producto}>
-            <Image source={aguacate} style={styles.imagen} />
-            <Text style={styles.nombre}>Aguacate</Text>
-            <Text style={styles.precio}>Docena $15.000</Text>
+            <Image source={tomateverde} style={styles.imagen} />
+            <Text style={styles.nombre}>Tomate Verde</Text>
+            <Text style={styles.precio}>Precio por Kilo $2.300</Text>
+            <Text style={styles.precio}>Lugar de procedencia: Salazar de las palmas</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.producto}>
-            <Image source={tomate} style={styles.imagen} />
-            <Text style={styles.nombre}>Tomate</Text>
-            <Text style={styles.precio}>Bulto $22.500</Text>
+            <Image source={tomatedearbol} style={styles.imagen} />
+            <Text style={styles.nombre}>Tomate de arbol</Text>
+            <Text style={styles.precio}>Precio por Kilo $2.000</Text>
+            <Text style={styles.precio}>Lugar de procedencia: Zulia</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.producto}>
-            <Image source={zanahoria} style={styles.imagen} />
-            <Text style={styles.nombre}>Zanahoria</Text>
-            <Text style={styles.precio}>Bulto $20.000</Text>
+            <Image source={tomatebuey} style={styles.imagen} />
+            <Text style={styles.nombre}>Tomate corazón de buey</Text>
+            <Text style={styles.precio}>Precio por Kilo $2.900</Text>
+            <Text style={styles.precio}>Lugar de procedencia: Pamplona</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -114,7 +110,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     marginBottom: 20,
   },
-  catalogo: {
+  buscar: {
     marginTop: 20,
   },
   row: {
@@ -148,4 +144,4 @@ const styles = StyleSheet.create({
 export default PaymentMethodsScreen;
 
 
-//interface de Freyman #2
+//interface de Freyman #3
