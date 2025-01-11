@@ -5,7 +5,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from "rea
 
 
 const iconpse = require('@/assets/images/pse.png');
-const iconbbva = require('@/assets/images/bbva.png');
+const iconbbva = require('@/assets/images/BBVA-logo.png');
 const iconbancolombia = require('@/assets/images/bancolombia.png');
 const iconnequi = require('@/assets/images/nequi.jpg');
 const icon = require('@/assets/images/logo.png');
