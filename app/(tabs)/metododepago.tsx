@@ -31,7 +31,7 @@ const PaymentMethodsScreen = () => {
       <View style={styles.paymentMethods}>
         <TouchableOpacity style={styles.methodButton}>
           <Image source={iconpse}style={styles.methodImage} />
-          <Text style={styles.methodText}>Usar método PSE</Text>
+          <Text style={styles.methodText}>Usar método                             PSE</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.methodButton}>
           <Image source={iconbancolombia} style={styles.methodImage} />

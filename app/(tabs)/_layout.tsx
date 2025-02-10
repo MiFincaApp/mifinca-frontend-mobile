@@ -19,33 +19,9 @@ export default function TabLayout() {
           headerShown: false, // Oculta la barra superior predeterminada de los tabs
         }}
       >
-        {/* Pantalla 1 - Home */}
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: "Home",
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? "home" : "home-outline"}
-                color={color}
-              />
-            ),
-          }}
-        />
+        
 
-        {/* Pantalla 2 - Explore */}
-        <Tabs.Screen
-          name="explore"
-          options={{
-            title: "Explore",
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? "code-slash" : "code-slash-outline"}
-                color={color}
-              />
-            ),
-          }}
-        />
+        
 
         {/* Pantalla 3 - Register */}
         <Tabs.Screen
