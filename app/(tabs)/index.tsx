@@ -1,70 +1,151 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React from "react";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const icon = require('@/assets/images/logo.png');
+const banner = require('@/assets/images/fondo.png');
+const papa = require ('@/assets/images/papa.png');
+const papaya = require ('@/assets/images/papaya.png');
+const yuca = require ('@/assets/images/yuca.png');
+const aguacate = require ('@/assets/images/aguacate.png');
+const tomate = require ('@/assets/images/tomate.png');
+const zanahoria = require ('@/assets/images/zanahoria.png');
 
-export default function HomeScreen() {
+const PaymentMethodsScreen = () => {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <ScrollView contentContainerStyle={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Image source={icon} style={styles.logo} />
+        <View style={styles.headerRight}>
+          <Text style={styles.headerText}>Obten nuestra app</Text>
+          <Text style={styles.headerText}>Mis pedidos</Text>
+          <Text style={styles.headerText}>Carrito</Text>
+          <Text style={styles.headerText}>Cuenta</Text>
+        </View>
+      </View>
+
+      {/* Banner */}
+      <Image source={banner} style={styles.banner} />
+
+      {/* Catálogo */}
+      <View style={styles.catalogo}>
+        {/* Fila 1 */}
+        <View style={styles.row}>
+          <TouchableOpacity style={styles.producto}>
+            <Image source={papa} style={styles.imagen} />
+            <Text style={styles.nombre}>Papa</Text>
+            <Text style={styles.precio}>Bulto $35.000</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.producto}>
+            <Image source={papaya} style={styles.imagen} />
+            <Text style={styles.nombre}>Papaya</Text>
+            <Text style={styles.precio}>Canasta $12.000</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.producto}>
+            <Image source={yuca} style={styles.imagen} />
+            <Text style={styles.nombre}>Yuca</Text>
+            <Text style={styles.precio}>Bulto $25.000</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Fila 2 */}
+        <View style={styles.row}>
+          <TouchableOpacity style={styles.producto}>
+            <Image source={aguacate} style={styles.imagen} />
+            <Text style={styles.nombre}>Aguacate</Text>
+            <Text style={styles.precio}>Docena $15.000</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.producto}>
+            <Image source={tomate} style={styles.imagen} />
+            <Text style={styles.nombre}>Tomate</Text>
+            <Text style={styles.precio}>Bulto $22.500</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.producto}>
+            <Image source={zanahoria} style={styles.imagen} />
+            <Text style={styles.nombre}>Zanahoria</Text>
+            <Text style={styles.precio}>Bulto $20.000</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flexGrow: 1,
+    backgroundColor: "#fff",
+    padding: 10,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  logo: {
+    width: 50,
+    height: 50,
+    resizeMode: "contain",
+  },
+  headerRight: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    flex: 1,
+    marginLeft: 20,
+  },
+  headerText: {
+    fontSize: 12,
+    color: "#000",
+    marginHorizontal: 10,
+  },
+  banner: {
+    width: "100%",
+    height: 200,
+    resizeMode: "cover",
+    marginBottom: 20,
+  },
+  catalogo: {
+    marginTop: 20,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginBottom: 20,
+  },
+  producto: {
+    alignItems: "center",
+    width: 100,
+  },
+  imagen: {
+    width: 80,
+    height: 80,
+    resizeMode: "contain",
+    marginBottom: 5,
+  },
+  nombre: {
+    fontSize: 14,
+    fontWeight: "bold",
+    textAlign: "center",
+    color: "#333",
+  },
+  precio: {
+    fontSize: 12,
+    textAlign: "center",
+    color: "#666",
   },
 });
+
+export default PaymentMethodsScreen;
+
+
+//interface de Freyman #2

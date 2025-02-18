@@ -19,33 +19,19 @@ export default function TabLayout() {
           headerShown: false, // Oculta la barra superior predeterminada de los tabs
         }}
       >
-        {/* Pantalla 1 - Home */}
+        {/* pantalla 6 - catalogo de productos */} //esto es codigo prueba de freyman no borrar
         <Tabs.Screen
-          name="index"
-          options={{
-            title: "Home",
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? "home" : "home-outline"}
-                color={color}
-              />
-            ),
-          }}
-        />
-
-        {/* Pantalla 2 - Explore */}
-        <Tabs.Screen
-          name="explore"
-          options={{
-            title: "Explore",
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? "code-slash" : "code-slash-outline"}
-                color={color}
-              />
-            ),
-          }}
-        />
+            name="index"
+            options={{
+              title: "catalogo",
+              tabBarIcon: ({ color, focused }) => (
+                <TabBarIcon
+                  name={focused ? "list" : "list-outline"}
+                  color={color}
+                />
+              ),
+            }}
+            />
 
         {/* Pantalla 3 - Register */}
         <Tabs.Screen
@@ -88,20 +74,6 @@ export default function TabLayout() {
             ),
           }}
           />
-
-          {/* pantalla 6 - catalogo de productos */} //esto es codigo prueba de freyman no borrar
-          <Tabs.Screen
-            name="catalogo"
-            options={{
-              title: "catalogo",
-              tabBarIcon: ({ color, focused }) => (
-                <TabBarIcon
-                  name={focused ? "list" : "list-outline"}
-                  color={color}
-                />
-              ),
-            }}
-            />
 
             {/* pantalla 7 - buscar */}
             <Tabs.Screen
