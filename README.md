@@ -1,50 +1,64 @@
-# Welcome to your Expo app 👋
+# MiFincaApp 🚜
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Bienvenido al repositorio de **MiFincaApp**, un proyecto desarrollado con [Expo](https://expo.dev) y [React Native](https://reactnative.dev).
 
-## Get started
+## 📌 Requisitos previos
+Antes de clonar el proyecto, asegúrate de tener instaladas las siguientes herramientas:
 
-1. Install dependencies
+- [Node.js](https://nodejs.org/) (versión recomendada: LTS)
+- [Git](https://git-scm.com/)
+- [Expo CLI](https://docs.expo.dev/get-started/installation/) (Instalar con `npm install -g expo-cli`)
+- Un emulador Android o un dispositivo físico con la app **Expo Go** instalada.
 
+## 🚀 Instalación y ejecución
+Sigue estos pasos para clonar y ejecutar el proyecto:
+
+1. Clonar el repositorio:
+   ```bash
+   git clone https://github.com/tu-usuario/MiFincaApp.git
+   cd MiFincaApp
+   ```
+
+2. Instalar dependencias:
    ```bash
    npm install
    ```
 
-2. Start the app
-
+3. Limpiar caché de Expo (opcional pero recomendado):
    ```bash
-    npx expo start
+   expo start -c
    ```
 
-In the output, you'll find options to open the app in a
+4. Iniciar el servidor de desarrollo:
+   ```bash
+   npx expo start
+   ```
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 📱 Cómo ejecutar en un dispositivo
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- Si usas un **emulador Android**, abre el emulador antes de ejecutar `expo start` y selecciona la opción "Run on Android device/emulator".
+- Si usas **Expo Go**, escanea el código QR generado con la app en tu dispositivo.
 
-## Get a fresh project
+## ❌ Posibles errores y soluciones
 
-When you're ready, run:
-
+### 1. Error `Cannot find module '@expo/server/build/vendor/http'`
+**Solución:**
 ```bash
-npm run reset-project
+rm -rf node_modules package-lock.json
+npm install
+expo start -c
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2. Error `Module not found` o `Missing dependencies`
+**Solución:**
+```bash
+npm install
+expo doctor
+```
 
-## Learn more
+## 🛠 Contribución
+Si encuentras algún problema o tienes sugerencias, comunícate con el equipo o abre un issue en el repositorio.
 
-To learn more about developing your project with Expo, look at the following resources:
+📧 Contacto: [andresrubioduque@gmail.com]
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+¡Gracias por contribuir a **MiFincaApp**! 🚀
