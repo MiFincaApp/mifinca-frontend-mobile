@@ -88,6 +88,20 @@ export default function TabLayout() {
                 ),
               }}
               />
+
+          {/* Pantalla 8 - Estado Pedido */}
+          <Tabs.Screen
+            name="estadoPedido"
+            options={{
+              title: "estadoPedido",
+              tabBarIcon: ({ color, focused }) => (
+                <TabBarIcon
+                  name={focused ? "receipt" : "receipt-outline"}
+                  color={color}
+                />
+              ),
+            }}
+          />
       </Tabs>
     </>
   );
