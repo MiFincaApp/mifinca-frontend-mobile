@@ -22,7 +22,7 @@ const PaymentMethodsScreen = () => {
           <Text style={styles.headerText}>Cuenta</Text>
         </View>
       </View>
-
+      {/* hola soy camilo esto es para probar git y github */}
       {/* Catálogo */}
       <View style={styles.buscar}>
         <Text >Buscar producto</Text>
