@@ -102,6 +102,64 @@ export default function TabLayout() {
               ),
             }}
           />
+
+          {/* Pantalla 9 - Preguntas Frecuentes */}
+          <Tabs.Screen
+            name="PreguntasFrecuentes"
+            options={{
+              title: "preguntasFrecuentes",
+              tabBarIcon: ({ color, focused }) => (
+                <TabBarIcon
+                  name={focused ? "help-circle" : "help-circle-outline"}
+                  color={color}
+                />
+              ),
+            }}
+          />
+
+          {/* Pantalla 10 - Informe Admin */}
+          <Tabs.Screen
+            name="informeadmin"
+            options={{
+              title: "informeadmin",
+              tabBarIcon: ({ color, focused }) => (
+                <TabBarIcon
+                  name={focused ? "information-outline" : "information"}
+                  color={color}
+                />
+              ),
+            }}
+          />
+
+          {/* Pantalla 11 - Informe Campesino */}
+          <Tabs.Screen
+            name="informecampesino" 
+            options={{
+              title: "informecampesino",
+              tabBarIcon: ({ color, focused }) => (
+                <TabBarIcon
+                  name={focused ? "information-outline" : "information"}
+                  color={color}
+                />
+              ),
+            }}
+          />
+
+          {/* Pantalla 12 - Perfil */}
+          <Tabs.Screen
+            name="Perfil"
+            options={{
+              title: "perfil",
+              tabBarIcon: ({ color, focused }) => (
+                <TabBarIcon
+                  name={focused ? "person-add" : "person-add-outline"}
+                  color={color}
+                />
+              ),
+            }}
+          />
+
+
       </Tabs>
     </>
   );
