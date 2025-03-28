@@ -19,6 +19,20 @@ export default function TabLayout() {
           headerShown: false, // Oculta la barra superior predeterminada de los tabs
         }}
       >
+        {/* Pantalla 1 -  Nosotros */}
+        <Tabs.Screen
+          name="nosotros"
+          options={{
+            title: "Nosotros",
+            tabBarIcon: ({ color, focused}) => (
+              <TabBarIcon
+                name={focused ? "people" : "people-outline"}
+                color={color}
+              />
+            )
+          }}
+        />
+
         {/* pantalla 6 - catalogo de productos */} //esto es codigo prueba de freyman no borrar
         <Tabs.Screen
             name="index"
