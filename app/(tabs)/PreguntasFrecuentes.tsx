@@ -7,37 +7,37 @@ const faqs = [
   {
     id: 1,
     pregunta: "¿Que es un sistema de comtenido?",
-    respuesta: "Contenido de la respuesta..."
+    respuesta: "Contenido de la respuesta...."
   },
   {
     id: 2,
     pregunta: "¿Cuál es el producto agotado?",
-    respuesta: "Contenido de la respuesta..."
+    respuesta: "Contenido de la respuesta...."
   },
   {
     id: 3,
     pregunta: "¿Cual es el problema con la transacción?",
-    respuesta: "Contenido de la respuesta..."
+    respuesta: "Contenido de la respuesta...."
   },
   {
     id: 4,
     pregunta: "¿Aun problema con el funcionamiento de la pagina?",
-    respuesta: "Contenido de la respuesta..."
+    respuesta: "Contenido de la respuesta...."
   },
   {
     id: 5,
     pregunta: "Debo alojar el sitio web de mi empresa en CMS hub?",
-    respuesta: "Contenido de la respuesta..."
+    respuesta: "Contenido de la respuesta...."
   },
   {
     id: 6,
     pregunta: "Ajuste en el sistema",
-    respuesta: "Contenido de la respuesta..."
+    respuesta: "Contenido de la respuesta...."
   },
   {
     id: 7,
     pregunta: "¿Con que recursos puedo comenzar?",
-    respuesta: "Contenido de la respuesta..."
+    respuesta: "Contenido de la respuesta...."
   }
 ];
 

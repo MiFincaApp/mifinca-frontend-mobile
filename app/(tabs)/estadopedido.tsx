@@ -43,9 +43,9 @@ const estadopedido = () => {
                   <View
                     style={[
                       styles.progressStep,
-                      step.status === "completed" && styles.completed,
-                      step.status === "current" && styles.current,
-                      step.status === "pending" && styles.pending,
+                      step.status === "Completo" && styles.completed,
+                      step.status === "En curso" && styles.current,
+                      step.status === "Pendiente" && styles.pending,
                     ]}
                   >
                     <Text>{index + 1}</Text>

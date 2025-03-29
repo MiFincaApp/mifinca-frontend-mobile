@@ -4,8 +4,8 @@ import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
 const icon = require('@/assets/images/logo.png');
 
 const userProfile = {
-  nombre: "Juan Pérez",
-  correo: "juan.perez@example.com",
+  nombre: "Juan Cardenas",
+  correo: "juan.cardenas@example.com",
   rol: "Cliente",
 };
 

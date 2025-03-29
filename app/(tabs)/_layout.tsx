@@ -130,7 +130,7 @@ export default function TabLayout() {
               ),
             }}
           />
-
+    
           {/* Pantalla 11 - Informe Campesino */}
           <Tabs.Screen
             name="informecampesino" 

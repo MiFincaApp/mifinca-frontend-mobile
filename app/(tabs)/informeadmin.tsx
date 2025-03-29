@@ -25,7 +25,7 @@ const farmStats = {
   ventas_por_finca: [
     { nombre: "Finca El Paraíso", ventas: 2500000 },
     { nombre: "Finca Los Alpes", ventas: 1800000 },
-    { nombre: "Finca Vista Hermosa", ventas: 800000 },
+    { nombre: "Finca Vista Hermosa", ventas: 900000 },
     { nombre: "Finca La Esperanza", ventas: 1500000 },
   ],
 };

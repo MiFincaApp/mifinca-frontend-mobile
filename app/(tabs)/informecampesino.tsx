@@ -21,7 +21,7 @@ const stats = {
     },
     ventas_productos: [
       { nombre: "Café Orgánico", ventas: 1500 },
-      { nombre: "Café Premium", ventas: 800 },
+      { nombre: "Café Premium", ventas: 900 },
       { nombre: "Café Tradicional", ventas: 1200 },
       { nombre: "Café Especial", ventas: 600 },
     ],
