@@ -23,6 +23,8 @@ const PaymentMethodsScreen = () => {
         </View>
       </View>
 
+      {/* Prueba de joseph */}
+
       {/* Catálogo */}
       <View style={styles.buscar}>
         <Text >Buscar producto</Text>
