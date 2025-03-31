@@ -15,9 +15,11 @@ const PaymentMethodsScreen = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Header */}
+
       <Header /> // Este es el componente header el cual se creo en la carpeta components y se importa en el archivo donde se usa
 
       {/* Prueba de joseph */}
+
 
       {/* Catálogo */}
       <View style={styles.buscar}>

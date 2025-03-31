@@ -39,3 +39,4 @@ const styles = StyleSheet.create({
     marginLeft: 24,
   },
 });
+//  Esto es un nuevo comentario de gabriel en el repo de camilo
