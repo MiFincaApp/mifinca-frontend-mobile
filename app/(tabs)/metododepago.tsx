@@ -2,27 +2,19 @@
 
 import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
-
+import Header from '@/components/header/header';
 
 const iconpse = require('@/assets/images/pse.png');
 const iconbbva = require('@/assets/images/BBVA-logo.png');
 const iconbancolombia = require('@/assets/images/bancolombia.png');
 const iconnequi = require('@/assets/images/nequi.jpg');
-const icon = require('@/assets/images/logo.png');
+
 
 const PaymentMethodsScreen = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <Image source={icon} style={styles.logo} />
-        <View style={styles.headerRight}>
-          <Text style={styles.headerText}>Obten nuestra app</Text>
-          <Text style={styles.headerText}>Mis pedidos</Text>
-          <Text style={styles.headerText}>Carrito</Text>
-          <Text style={styles.headerText}>Cuenta</Text>
-        </View>
-      </View>
+      <Header />
 
       {/* Title */}
       <Text style={styles.title}>SELECCIONE SU MÉTODO DE PAGO</Text>
@@ -55,30 +47,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: "#fff",
     padding: 10,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-  },
-  logo: {
-    width: 50,
-    height: 50,
-    resizeMode: "contain",
-  },
-  headerRight: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    flex: 1,
-    marginLeft: 20,
-  },
-  headerText: {
-    fontSize: 12,
-    color: "#000",
-    marginHorizontal: 10,
   },
   title: {
     fontSize: 18,

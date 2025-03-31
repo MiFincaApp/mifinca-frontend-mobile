@@ -1,5 +1,7 @@
 import React from "react";
 import {View,Text,Image,TouchableOpacity,StyleSheet,ScrollView,} from "react-native";
+import Header from '@/components/header/header';
+
 
 const icon = require('@/assets/images/logo.png');
 const tomatepera = require ('@/assets/images/tomatepera.jpeg');
@@ -13,15 +15,7 @@ const PaymentMethodsScreen = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <Image source={icon} style={styles.logo} />
-        <View style={styles.headerRight}>
-          <Text style={styles.headerText}>Obten nuestra app</Text>
-          <Text style={styles.headerText}>Mis pedidos</Text>
-          <Text style={styles.headerText}>Carrito</Text>
-          <Text style={styles.headerText}>Cuenta</Text>
-        </View>
-      </View>
+      <Header /> // Este es el componente header el cual se creo en la carpeta components y se importa en el archivo donde se usa
 
       {/* Prueba de joseph */}
 
@@ -82,30 +76,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 10,
   },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-  },
-  logo: {
-    width: 50,
-    height: 50,
-    resizeMode: "contain",
-  },
-  headerRight: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    flex: 1,
-    marginLeft: 20,
-  },
-  headerText: {
-    fontSize: 12,
-    color: "#000",
-    marginHorizontal: 10,
-  },
+
   banner: {
     width: "100%",
     height: 200,

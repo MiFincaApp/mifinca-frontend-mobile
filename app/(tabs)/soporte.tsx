@@ -1,5 +1,7 @@
 import React from "react";
 import {StyleSheet, ScrollView, View, Text, Image, TouchableOpacity} from "react-native";
+import Header from '@/components/header/header';
+
 
 const icon = require('@/assets/images/LogoMiFinca.png');
 const iconw = require('@/assets/images/whatsapp.png');
@@ -8,15 +10,7 @@ const PaymentMethodsScreen = () => {
   return(
     <ScrollView contentContainerStyle={styles.container}>
         {/* Header */}
-        <View style={styles.header}>
-            <Image source={icon} style={styles.logo} />
-            <View style={styles.headerRight}>
-                <Text style={styles.headerText}>Obten nuestra app</Text>
-                <Text style={styles.headerText}>Mis pedidos</Text>
-                <Text style={styles.headerText}>Carrito</Text>
-                <Text style={styles.headerText}>Cuenta</Text>
-            </View>
-        </View>
+        <Header />
 
             {/* Banner - Logo */}
             <Image source={icon} style={styles.methodBanner}></Image>
@@ -47,30 +41,6 @@ const styles= StyleSheet.create({
         flexGrow: 1,
         backgroundColor: "#fff",
         padding: 10,
-    },
-    header: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        paddingVertical: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: "#ddd",
-    },
-    logo: {
-        width: 50,
-        height: 50,
-        resizeMode: "contain",
-    },
-    headerRight: {
-        flexDirection: "row",
-        justifyContent: "space-around",
-        flex: 1,
-        marginLeft: 20,
-    },
-    headerText: {
-        fontSize: 12,
-        color: "#000",
-        marginHorizontal: 10,
     },
     methodBanner: {
         width: "100%",

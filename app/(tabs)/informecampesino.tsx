@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
-
-const icon = require('@/assets/images/logo.png');
+import Header from '@/components/header/header';
 
 const stats = {
     mas_vendido: {
@@ -31,15 +30,7 @@ const InformeCampesino = () => {
     return (
       <ScrollView contentContainerStyle={styles.container}>
         {/* Header */}
-        <View style={styles.header}>
-          <Image source={icon} style={styles.logo} />
-          <View style={styles.headerRight}>
-            <Text style={styles.headerText}>Obten nuestra app</Text>
-            <Text style={styles.headerText}>Mis pedidos</Text>
-            <Text style={styles.headerText}>Carrito</Text>
-            <Text style={styles.headerText}>Cuenta</Text>
-          </View>
-        </View>
+        <Header />
 
         <Text style={styles.title}>Informes de Ventas - Finca El Paraíso</Text>
         <View style={styles.statsGrid}>
@@ -79,30 +70,7 @@ const styles = StyleSheet.create({
       backgroundColor: "#fff",
       padding: 10,
     },
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingVertical: 10,
-      borderBottomWidth: 1,
-      borderBottomColor: "#ddd",
-    },
-    logo: {
-      width: 50,
-      height: 50,
-      resizeMode: "contain",
-    },
-    headerRight: {
-      flexDirection: "row",
-      justifyContent: "space-around",
-      flex: 1,
-      marginLeft: 20,
-    },
-    headerText: {
-      fontSize: 12,
-      color: "#000",
-      marginHorizontal: 10,
-    },
+    
     title: {
         textAlign: "center",
         fontSize: 24,
