@@ -19,6 +19,32 @@ export default function TabLayout() {
           headerShown: false, // Oculta la barra superior predeterminada de los tabs
         }}
       >
+        {/* Pantalla 1 -  Nosotros */}
+        <Tabs.Screen
+          name="nosotros"
+          options={{
+            title: "Nosotros",
+            tabBarIcon: ({ color, focused}) => (
+              <TabBarIcon
+                name={focused ? "people" : "people-outline"}
+                color={color}
+              />
+            )
+          }}
+        />
+        {/* pantalla 2 - soporte */}
+        <Tabs.Screen
+          name="soporte"
+          options={{
+            title: "Soporte",
+            tabBarIcon: ({ color, focused}) => (
+              <TabBarIcon
+                name={focused ? "help-circle" : "help-circle-outline"}
+                color={color}
+              />
+            )
+          }}
+        />
         {/* pantalla 6 - catalogo de productos */} //esto es codigo prueba de freyman no borrar
         <Tabs.Screen
             name="index"
@@ -88,6 +114,78 @@ export default function TabLayout() {
                 ),
               }}
               />
+
+          {/* Pantalla 8 - Estado Pedido */}
+          <Tabs.Screen
+            name="estadoPedido"
+            options={{
+              title: "estadoPedido",
+              tabBarIcon: ({ color, focused }) => (
+                <TabBarIcon
+                  name={focused ? "receipt" : "receipt-outline"}
+                  color={color}
+                />
+              ),
+            }}
+          />
+
+          {/* Pantalla 9 - Preguntas Frecuentes */}
+          <Tabs.Screen
+            name="PreguntasFrecuentes"
+            options={{
+              title: "preguntasFrecuentes",
+              tabBarIcon: ({ color, focused }) => (
+                <TabBarIcon
+                  name={focused ? "help-circle" : "help-circle-outline"}
+                  color={color}
+                />
+              ),
+            }}
+          />
+
+          {/* Pantalla 10 - Informe Admin */}
+          <Tabs.Screen
+            name="informeadmin"
+            options={{
+              title: "informeadmin",
+              tabBarIcon: ({ color, focused }) => (
+                <TabBarIcon
+                  name={focused ? "information-outline" : "information"}
+                  color={color}
+                />
+              ),
+            }}
+          />
+    
+          {/* Pantalla 11 - Informe Campesino */}
+          <Tabs.Screen
+            name="informecampesino" 
+            options={{
+              title: "informecampesino",
+              tabBarIcon: ({ color, focused }) => (
+                <TabBarIcon
+                  name={focused ? "information-outline" : "information"}
+                  color={color}
+                />
+              ),
+            }}
+          />
+
+          {/* Pantalla 12 - Perfil */}
+          <Tabs.Screen
+            name="Perfil"
+            options={{
+              title: "perfil",
+              tabBarIcon: ({ color, focused }) => (
+                <TabBarIcon
+                  name={focused ? "person-add" : "person-add-outline"}
+                  color={color}
+                />
+              ),
+            }}
+          />
+
+
       </Tabs>
     </>
   );
