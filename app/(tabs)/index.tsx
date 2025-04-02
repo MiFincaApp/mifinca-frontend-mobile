@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import Header from '@/components/header/header'; //Aseguramos que el header esté presente
 
-// const API_URL = "http://192.168.1.35:8080/api/products"; // Cambia según tu entorno
-const API_URL = "https://api.mifincaapp.com/api/products";
+// const API_URL = ""; // Cambia según tu entorno
+const API_URL = ""; //Aqui va el url del api
 
 
 interface Producto {
