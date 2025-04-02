@@ -16,6 +16,7 @@ const order = {
 const estadopedido = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      
       {/* Header */}
       <Header />
 
