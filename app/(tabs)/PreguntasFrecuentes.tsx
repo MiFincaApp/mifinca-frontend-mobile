@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-
-const icon = require('@/assets/images/logo.png');
+import Header from "./header/header";
 
 const faqs = [
   {
@@ -44,15 +43,10 @@ const faqs = [
 const PreguntasFrecuentes = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
+
       {/* Header */}
-      <View style={styles.header}>
-        <Image source={icon} style={styles.logo} />
-        <View style={styles.headerRight}>
-          <Text style={styles.headerText}>Obten nuestra app</Text>
-          <Text style={styles.headerText}>Mis pedidos</Text>
-          <Text style={styles.headerText}>Carrito</Text>
-          <Text style={styles.headerText}>Cuenta</Text>
-        </View>
+      <View>
+        <Header />
       </View>
 
       {/* FAQ Section */}

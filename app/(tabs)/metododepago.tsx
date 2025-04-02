@@ -2,26 +2,21 @@
 
 import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import Header from "./header/header";
 
 
 const iconpse = require('@/assets/images/pse.png');
 const iconbbva = require('@/assets/images/BBVA-logo.png');
 const iconbancolombia = require('@/assets/images/bancolombia.png');
 const iconnequi = require('@/assets/images/nequi.jpg');
-const icon = require('@/assets/images/logo.png');
 
 const PaymentMethodsScreen = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      
       {/* Header */}
-      <View style={styles.header}>
-        <Image source={icon} style={styles.logo} />
-        <View style={styles.headerRight}>
-          <Text style={styles.headerText}>Obten nuestra app</Text>
-          <Text style={styles.headerText}>Mis pedidos</Text>
-          <Text style={styles.headerText}>Carrito</Text>
-          <Text style={styles.headerText}>Cuenta</Text>
-        </View>
+      <View>
+        <Header />
       </View>
 
       {/* Title */}

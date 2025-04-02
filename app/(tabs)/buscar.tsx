@@ -1,29 +1,22 @@
 import React from "react";
 import {View,Text,Image,TouchableOpacity,StyleSheet,ScrollView,} from "react-native";
 
-const icon = require('@/assets/images/logo.png');
 const tomatepera = require ('@/assets/images/tomatepera.jpeg');
 const tomatecherry = require ('@/assets/images/tomatecherry.jpeg');
 const tomateraf = require ('@/assets/images/tomateraf.jpeg');
 const tomateverde = require ('@/assets/images/tomateverde.jpeg');
 const tomatedearbol = require ('@/assets/images/tomatedearbol.jpeg');
 const tomatebuey = require ('@/assets/images/tomatebuey.jpeg');
+import Header from "./header/header";
 
 const PaymentMethodsScreen = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      
       {/* Header */}
-      <View style={styles.header}>
-        <Image source={icon} style={styles.logo} />
-        <View style={styles.headerRight}>
-          <Text style={styles.headerText}>Obten nuestra app</Text>
-          <Text style={styles.headerText}>Mis pedidos</Text>
-          <Text style={styles.headerText}>Carrito</Text>
-          <Text style={styles.headerText}>Cuenta</Text>
-        </View>
+      <View>
+        <Header />
       </View>
-
-      {/* Prueba de joseph */}
 
       {/* Catálogo */}
       <View style={styles.buscar}>
