@@ -185,6 +185,47 @@ export default function TabLayout() {
             }}
           />
 
+          {/* Pantalla 13 - Descripción del producto */}
+          <Tabs.Screen
+            name="descripcionProducto"
+            options={{
+              title: "Dscripción del producto",
+              tabBarIcon: ({ color, focused }) => (
+                <TabBarIcon
+                  name={focused ? "information-outline" : "information"}
+                  color={color}
+                />
+              ),
+            }}
+            />
+
+            {/* Pantalla 14 - Administración */}
+            <Tabs.Screen
+              name="administracion"
+              options={{
+                title: "Administración",
+                tabBarIcon: ({ color, focused }) => (
+                  <TabBarIcon
+                    name={focused ? "information-outline" : "information"}
+                    color={color}
+                  />
+                ),
+              }}
+              />
+
+              {/* Pantalla 15 - Administrador */}
+              <Tabs.Screen
+                name="administrador"
+                options={{
+                  title: "Administrador",
+                  tabBarIcon: ({ color, focused }) => (
+                    <TabBarIcon
+                      name={focused ? "information-outline" : "information"}
+                      color={color}
+                    />
+                  ),
+                }}
+                />
 
       </Tabs>
     </>
