@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Image, StyleSheet, ScrollView } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { View, Text, TextInput, Image, StyleSheet, ScrollView,TouchableOpacity} from "react-native";
 
 const messages = [
   { sender: "EMPRESA", text: "Hola, ¿en qué podemos ayudarte?" },
