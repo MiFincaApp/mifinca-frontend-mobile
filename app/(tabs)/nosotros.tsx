@@ -7,7 +7,7 @@ const Astore = require('@/assets/images/appstore.png');
 const Gplay = require('@/assets/images/googleplay.png');
 
 
-const PaymentMethodsScreen = () => {
+const nosotros = () => {
     return(
         <ScrollView contentContainerStyle={styles.container}>
             {/* Header */}
@@ -90,4 +90,4 @@ const styles= StyleSheet.create({
 });
 
 
-export default PaymentMethodsScreen;
+export default nosotros;

@@ -13,7 +13,7 @@ interface Producto {
   imagen_url: string;
 }
 
-const CatalogoScreen = () => {
+const index = () => {
   const [productos, setProductos] = useState<Producto[]>([]);
 
   useEffect(() => {
@@ -83,4 +83,4 @@ const styles = StyleSheet.create({
   loading: { textAlign: "center", marginTop: 20, fontSize: 16, color: "gray" },
 });
 
-export default CatalogoScreen;
+export default index;
