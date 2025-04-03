@@ -11,7 +11,6 @@ export default function TabLayout() {
   return (
     <>
       
-
       {/* Navegación de Tabs */}
       <Tabs
         screenOptions={{
@@ -40,6 +39,18 @@ export default function TabLayout() {
             tabBarIcon: ({ color, focused}) => (
               <TabBarIcon
                 name={focused ? "help-circle" : "help-circle-outline"}
+                color={color}
+              />
+            )
+          }}
+        />
+        <Tabs.Screen
+          name="tickets"
+          options={{
+            title: "Tickets",
+            tabBarIcon: ({ color, focused}) => (
+              <TabBarIcon
+                name={focused ? "people" : "people-outline"}
                 color={color}
               />
             )

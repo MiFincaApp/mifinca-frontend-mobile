@@ -1,11 +1,12 @@
 import React from "react";
 import {StyleSheet, ScrollView, View, Text, Image, TouchableOpacity} from "react-native";
 
-const icon = require('@/assets/images/LogoMiFinca.png');
+const icon = require('@/assets/images/logo.png');
+const iconLM = require('@/assets/images/LogoMiFinca.png')
 const iconw = require('@/assets/images/whatsapp.png');
 
 const PaymentMethodsScreen = () => {
-  return(
+    return(
     <ScrollView contentContainerStyle={styles.container}>
         {/* Header */}
         <View style={styles.header}>
@@ -19,7 +20,7 @@ const PaymentMethodsScreen = () => {
         </View>
 
             {/* Banner - Logo */}
-            <Image source={icon} style={styles.methodBanner}></Image>
+            <Image source={iconLM} style={styles.methodBanner}></Image>
 
             {/* Buttons */}
             <View style={styles.buttonContainer}>
