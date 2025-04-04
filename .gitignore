@@ -37,3 +37,4 @@ yarn-error.log*
 # Archivos temporales y específicos de sistema operativo (opcional, si es relevante para tu entorno)
 .tmp/
 .temporary/
+dist/

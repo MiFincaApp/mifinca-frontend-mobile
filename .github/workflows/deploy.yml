@@ -3,41 +3,33 @@ name: Deploy to VPS
 on:
   push:
     branches:
-      - main  # Se activa cuando se hace un push a la rama main
+      - main
   pull_request:
     branches:
-      - main  # Se activa cuando se aprueba un pull request hacia la rama main
+      - main
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest  # Usamos una máquina Ubuntu para ejecutar el trabajo
+    runs-on: ubuntu-latest
 
     steps:
-    # Paso 1: Checkout del repositorio
     - name: Checkout the repository
       uses: actions/checkout@v2
-      # Esto descarga el código del repositorio en la máquina donde se ejecuta el flujo de trabajo
 
-    # Paso 2: Configurar SSH
     - name: Set up SSH
       uses: webfactory/ssh-agent@v0.5.3
       with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Usa el secret SSH_PRIVATE_KEY para la clave privada SSH
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    # Paso 3: Instalar dependencias y construir la aplicación web con Expo
     - name: Build the app with Expo
       run: |
-        npm install  # Instalar dependencias
-        npx expo export:web  # Crear la versión web de la aplicación usando Expo (reemplaza 'build:web' por 'export:web')
+        npm install
+        npx expo export --platform web
 
-    # Paso 4: Desplegar al servidor VPS usando rsync
     - name: Deploy to VPS using rsync
       run: |
-        rsync -avz --delete ./web-build/ gabriel@${{ secrets.VPS_IP }}:/var/www/mifincaapp/
-        # Se sincronizan los archivos construidos con la carpeta en el servidor
+        rsync -avz --delete ./dist/ gabriel@${{ secrets.VPS_IP }}:/var/www/mifincaapp/
 
-    # Paso 5: Reiniciar Nginx para aplicar cambios (si es necesario)
     - name: Restart Nginx
       run: |
         ssh gabriel@${{ secrets.VPS_IP }} 'sudo systemctl restart nginx'
-        # Reinicia Nginx para que la nueva versión de la app se sirva correctamente
