@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, Pressable, } from "react-native";
 import { useRouter } from 'expo-router'; // importamos el expo router
+import MenuHamburguesa from "../desplegable/menu";
 
 const icon = require("@/assets/images/logo.png");
 
@@ -8,7 +9,7 @@ const header = () => {
   const router = useRouter(); // usamos el router de expo
   return (
     <View style={styles.header}>
-
+    <MenuHamburguesa/>
       <Pressable onPress={() => router.push('/')}>
         <Image source={icon} style={styles.logo} />
       </Pressable>
