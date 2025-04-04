@@ -11,36 +11,36 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest  #  Usamos una máquina virtual Ubuntu
+    runs-on: ubuntu-latest  # Usamos una máquina virtual Ubuntu
 
     steps:
-    #  1. Descargar el repositorio
+    # 1. Descargar el repositorio
     - name: Checkout the repository
       uses: actions/checkout@v2
 
-    #  2. Configurar el agente SSH con tu clave privada almacenada en los secretos de GitHub
+    # 2. Configurar el agente SSH con tu clave privada almacenada en los secretos de GitHub
     - name: Set up SSH
       uses: webfactory/ssh-agent@v0.5.3
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    #  3. Agregar la IP del servidor al archivo known_hosts para evitar error de verificación
+    # 3. Agregar la IP del servidor al archivo known_hosts para evitar error de verificación
     - name: Add VPS to known_hosts
       run: |
         ssh-keyscan -H ${{ secrets.VPS_IP }} >> ~/.ssh/known_hosts
 
-    #  4. Instalar dependencias y construir la versión web con Expo
+    # 4. Instalar dependencias y construir la versión web con Expo
     - name: Build the app with Expo
       run: |
         npm install
         npx expo export --platform web  # Esto genera la carpeta ./dist
 
-    #  5. Subir la carpeta ./dist al servidor con rsync (borrando archivos obsoletos en el destino)
+    # 5. Subir la carpeta ./dist al servidor usando secrets para ocultar el usuario
     - name: Deploy to VPS using rsync
       run: |
-        rsync -avz --delete ./dist/ gabriel@${{ secrets.VPS_IP }}:/var/www/mifincaapp/
+        rsync -avz --delete ./dist/ ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}:/var/www/mifincaapp/
 
-    #  6. Reiniciar Nginx para aplicar cambios
+    # 6. Reiniciar Nginx para aplicar los cambios en producción
     - name: Restart Nginx
       run: |
-        ssh gabriel@${{ secrets.VPS_IP }} 'sudo systemctl restart nginx'
+        ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }} 'sudo systemctl restart nginx'
