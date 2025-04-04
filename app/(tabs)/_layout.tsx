@@ -22,12 +22,9 @@ export default function TabLayout() {
         <Tabs.Screen
           name="nosotros"
           options={{
-<<<<<<< HEAD
-            href: null, // Elimina la barra de pestañas
-=======
+
             title: "Nosotros",
             tabBarButton: () => null, // Evita que la pestaña se muestre
->>>>>>> main
           }}
         />
 
@@ -115,50 +112,32 @@ export default function TabLayout() {
         />
 
         {/* Pantalla 8 - Estado Pedido */}
-        <Tabs.Screen
-          name="estadopedido"
-          options={{
-<<<<<<< HEAD
-            href: null, // Elimina la barra de pestañas
-=======
-            title: "Estado Pedido",
-            tabBarStyle: { display: "none" }, // Oculta la pestaña cuando esté activa
-            tabBarButton: () => null, // Evita que se muestre en la barra de pestañas
->>>>>>> main
-          }}
-        />
+<Tabs.Screen
+  name="estadopedido"
+  options={{
+    title: "Estado Pedido",
+    tabBarStyle: { display: "none" }, // Oculta la pestaña cuando esté activa
+    tabBarButton: () => null, // Evita que se muestre en la barra de pestañas
+  }}
+/>
 
-        {/* Pantalla 9 - Preguntas Frecuentes */}
-        <Tabs.Screen
-          name="PreguntasFrecuentes"
-          options={{
-<<<<<<< HEAD
-              href:null,
-          }}
-        />
 
-        {/* Pantalla 10 - Informe Admin */}
-        <Tabs.Screen
-          name="informeadmin"
-          options={{
-            title: "informeadmin",
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? "information-outline" : "information"}
-=======
+{/* Pantalla 9 - Preguntas Frecuentes */ }
+<Tabs.Screen
+  name="PreguntasFrecuentes"
+  options={{
+
             title: "preguntasFrecuentes",
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon
                 name={focused ? "help-circle" : "help-circle-outline"}
->>>>>>> main
-                color={color}
-              />
-            ),
-          }}
-        />
 
-<<<<<<< HEAD
-=======
+        color={color}
+      />
+    ),
+  }}
+/>
+
         {/* Pantalla 10 - Informe Admin */}
         <Tabs.Screen
           name="informeadmin"
@@ -173,28 +152,24 @@ export default function TabLayout() {
           }}
         />
 
->>>>>>> main
-        {/* Pantalla 11 - Informe Campesino */}
-        <Tabs.Screen
-          name="informecampesino"
-          options={{
-            title: "informecampesino",
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? "information-outline" : "information"}
-                color={color}
-              />
-            ),
-          }}
-        />
+{/* Pantalla 11 - Informe Campesino */ }
+<Tabs.Screen
+  name="informecampesino"
+  options={{
+    title: "informecampesino",
+    tabBarIcon: ({ color, focused }) => (
+      <TabBarIcon
+        name={focused ? "information-outline" : "information"}
+        color={color}
+      />
+    ),
+  }}
+/>
 
-        {/* Pantalla 12 - Perfil */}
-        <Tabs.Screen
-          name="Perfil"
-          options={{
-<<<<<<< HEAD
-            href: null, // Elimina la barra de pestañas
-=======
+{/* Pantalla 12 - Perfil */ }
+<Tabs.Screen
+  name="Perfil"
+  options={{
             title: "perfil",
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon
@@ -202,17 +177,13 @@ export default function TabLayout() {
                 color={color}
               />
             ),
->>>>>>> main
-          }}
-        />
+  }}
+/>
 
-        {/* Pantalla 13 - Descripción del producto */}
-        <Tabs.Screen
-          name="descripcionProducto"
-          options={{
-<<<<<<< HEAD
-            href: null, // Elimina la barra de pestañas
-=======
+{/* Pantalla 13 - Descripción del producto */ }
+<Tabs.Screen
+  name="descripcionProducto"
+  options={{
             title: "Dscripción del producto",
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon
@@ -220,39 +191,38 @@ export default function TabLayout() {
                 color={color}
               />
             ),
->>>>>>> main
-          }}
-        />
+  }}
+/>
 
-        {/* Pantalla 14 - Administración */}
-        <Tabs.Screen
-          name="administracion"
-          options={{
-            title: "Administración",
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? "information-outline" : "information"}
-                color={color}
-              />
-            ),
-          }}
-        />
+{/* Pantalla 14 - Administración */ }
+<Tabs.Screen
+  name="administracion"
+  options={{
+    title: "Administración",
+    tabBarIcon: ({ color, focused }) => (
+      <TabBarIcon
+        name={focused ? "information-outline" : "information"}
+        color={color}
+      />
+    ),
+  }}
+/>
 
-        {/* Pantalla 15 - Administrador */}
-        <Tabs.Screen
-          name="administrador"
-          options={{
-            title: "Administrador",
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? "information-outline" : "information"}
-                color={color}
-              />
-            ),
-          }}
-        />
+{/* Pantalla 15 - Administrador */ }
+<Tabs.Screen
+  name="administrador"
+  options={{
+    title: "Administrador",
+    tabBarIcon: ({ color, focused }) => (
+      <TabBarIcon
+        name={focused ? "information-outline" : "information"}
+        color={color}
+      />
+    ),
+  }}
+/>
 
-      </Tabs>
+      </Tabs >
     </>
   );
 }
