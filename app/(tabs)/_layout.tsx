@@ -22,8 +22,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="nosotros"
           options={{
-            title: "Nosotros",
-            tabBarButton: () => null, // Evita que la pestaña se muestre
+            href: null, // Elimina la barra de pestañas
           }}
         />
 
@@ -40,7 +39,7 @@ export default function TabLayout() {
             )
           }}
         />
-        {/* pantalla 6 - catalogo de productos */} //esto es codigo prueba de freyman no borrar
+        {/* pantalla 6 - catalogo de productos */}
         <Tabs.Screen
           name="index"
           options={{
@@ -114,9 +113,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="estadopedido"
           options={{
-            title: "Estado Pedido",
-            tabBarStyle: { display: "none" }, // Oculta la pestaña cuando esté activa
-            tabBarButton: () => null, // Evita que se muestre en la barra de pestañas
+            href: null, // Elimina la barra de pestañas
           }}
         />
 
@@ -124,13 +121,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="PreguntasFrecuentes"
           options={{
-            title: "preguntasFrecuentes",
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? "help-circle" : "help-circle-outline"}
-                color={color}
-              />
-            ),
+              href:null,
           }}
         />
 
@@ -166,13 +157,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="Perfil"
           options={{
-            title: "perfil",
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? "person-add" : "person-add-outline"}
-                color={color}
-              />
-            ),
+            href: null, // Elimina la barra de pestañas
           }}
         />
 
@@ -180,13 +165,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="descripcionProducto"
           options={{
-            title: "Dscripción del producto",
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? "information-outline" : "information"}
-                color={color}
-              />
-            ),
+            href: null, // Elimina la barra de pestañas
           }}
         />
 

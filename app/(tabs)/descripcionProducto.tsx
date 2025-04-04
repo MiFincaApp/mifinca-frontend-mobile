@@ -10,7 +10,7 @@ const papa = require('@/assets/images/papa.png');
 const yuca = require('@/assets/images/yuca.png');
 const zanahoria = require('@/assets/images/zanahoria.png');
 
-const ProductDescriptionScreen = () => {
+const descripcionProducto = () => {
     return (
         <ScrollView contentContainerStyle={styles.container}>
             {/* Header */}
@@ -171,4 +171,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ProductDescriptionScreen;
+export default descripcionProducto;

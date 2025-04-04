@@ -3,7 +3,7 @@ import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, ScrollView 
 
 const personnelData = [
   { id: 1, name: "Gabriel Andrés Duque", role: "Gerente", status: "Activo" },
-  { id: 2, name: "Freyman Vivescas", role: "Soporte", status: "Activo" },
+  { id: 2, name: "Freyman Viviescas", role: "Soporte", status: "Activo" },
   { id: 3, name: "Jeyler Valencia", role: "Dt. Marketing", status: "Activo" },
   { id: 4, name: "Karol Lemos Segura", role: "Secretaría", status: "Activo" },
 ];
@@ -12,6 +12,7 @@ const PersonnelManagement = () => {
   return (
     <View style={styles.container}>
       {/* Header */}
+      
       <View style={styles.header}>
         <Image source={require("@/assets/images/logo.png")} style={styles.logo} />
         <TextInput placeholder="Search" style={styles.searchBar} />

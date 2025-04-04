@@ -1,5 +1,6 @@
 import React from "react";
 import {View,Text,Image,TouchableOpacity,StyleSheet,ScrollView,} from "react-native";
+import { useRouter } from 'expo-router'; // importamos el expo router
 import Header from '@/components/header/header';
 
 
@@ -12,6 +13,7 @@ const tomatedearbol = require ('@/assets/images/tomatedearbol.jpeg');
 const tomatebuey = require ('@/assets/images/tomatebuey.jpeg');
 
 const PaymentMethodsScreen = () => {
+  const router = useRouter(); // usamos el router de expo
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Header */}
@@ -20,13 +22,12 @@ const PaymentMethodsScreen = () => {
 
       {/* Prueba de joseph */}
 
-
       {/* Catálogo */}
       <View style={styles.buscar}>
         <Text >Buscar producto</Text>
         {/* Fila 1 */}
         <View style={styles.row}>
-          <TouchableOpacity style={styles.producto}>
+          <TouchableOpacity style={styles.producto} onPress={() => router.push('/descripcionProducto')}>
             <Image source={tomatepera} style={styles.imagen} />
             <Text style={styles.nombre}>Tomate pera</Text>
             <Text style={styles.precio}>Precio por kilo 3000</Text>

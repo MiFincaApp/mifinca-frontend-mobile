@@ -7,7 +7,7 @@ const messages = [
   { sender: "EMPRESA", text: "Enseguida resolvemos su inconveniente" },
 ];
 
-const ChatScreen = () => {
+const administracion = () => {
   const [inputText, setInputText] = useState("");
 
   return (
@@ -87,4 +87,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatScreen;
+export default administracion;

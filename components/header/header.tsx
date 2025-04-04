@@ -21,7 +21,9 @@ const header = () => {
         <Text style={styles.headerText}>Mis pedidos</Text>
       </Pressable>
         <Text style={styles.headerText}>Carrito</Text>
+        <Pressable onPress={() => router.push('/Perfil')}>
         <Text style={styles.headerText}>Cuenta</Text>
+        </Pressable>
         
       </View>
     </View>
@@ -54,6 +56,14 @@ const styles = StyleSheet.create({
     color: "#000",
     marginHorizontal: 5, // Reduce el espacio horizontal
     flexShrink: 1, // Evita que el texto se salga de la pantalla
+  },
+  searchBar: {
+    flex: 1,
+    marginLeft: 20,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 5,
   },
 });
 
