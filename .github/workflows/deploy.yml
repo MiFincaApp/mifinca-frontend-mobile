@@ -23,6 +23,7 @@ jobs:
       uses: webfactory/ssh-agent@v0.5.3
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Usa el secret SSH_PRIVATE_KEY para la clave privada SSH
+        ssh-passphrase: ${{ secrets.SSH_PASSPHRASE }}  # Usa el secret SSH_PASSPHRASE para la passphrase de la clave privada
 
     # Paso 3: Instalar dependencias y construir la aplicación web con Expo
     - name: Build the app with Expo
@@ -35,3 +36,9 @@ jobs:
       run: |
         rsync -avz --delete ./web-build/ gabriel@${{ secrets.VPS_IP }}:/var/www/mifincaapp/
         # Se sincronizan los archivos construidos con la carpeta en el servidor
+
+    # Paso 5: Reiniciar Nginx para aplicar cambios (si es necesario)
+    - name: Restart Nginx
+      run: |
+        ssh gabriel@${{ secrets.VPS_IP }} 'sudo systemctl restart nginx'
+        # Reinicia Nginx para que la nueva versión de la app se sirva correctamente
