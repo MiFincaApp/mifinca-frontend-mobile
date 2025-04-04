@@ -28,7 +28,7 @@ jobs:
     - name: Build the app with Expo
       run: |
         npm install  # Instalar dependencias
-        npx expo build:web  # Crear la versión web de la aplicación usando Expo
+        npx expo export:web  # Crear la versión web de la aplicación usando Expo (reemplaza 'build:web' por 'export:web')
 
     # Paso 4: Desplegar al servidor VPS usando rsync
     - name: Deploy to VPS using rsync
