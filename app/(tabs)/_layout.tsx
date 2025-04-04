@@ -22,8 +22,12 @@ export default function TabLayout() {
         <Tabs.Screen
           name="nosotros"
           options={{
+<<<<<<< HEAD
+            href: null, // Elimina la barra de pestañas
+=======
             title: "Nosotros",
             tabBarButton: () => null, // Evita que la pestaña se muestre
+>>>>>>> main
           }}
         />
 
@@ -40,7 +44,7 @@ export default function TabLayout() {
             )
           }}
         />
-        {/* pantalla 6 - catalogo de productos */} //esto es codigo prueba de freyman no borrar
+        {/* pantalla 6 - catalogo de productos */}
         <Tabs.Screen
           name="index"
           options={{
@@ -114,9 +118,13 @@ export default function TabLayout() {
         <Tabs.Screen
           name="estadopedido"
           options={{
+<<<<<<< HEAD
+            href: null, // Elimina la barra de pestañas
+=======
             title: "Estado Pedido",
             tabBarStyle: { display: "none" }, // Oculta la pestaña cuando esté activa
             tabBarButton: () => null, // Evita que se muestre en la barra de pestañas
+>>>>>>> main
           }}
         />
 
@@ -124,16 +132,33 @@ export default function TabLayout() {
         <Tabs.Screen
           name="PreguntasFrecuentes"
           options={{
+<<<<<<< HEAD
+              href:null,
+          }}
+        />
+
+        {/* Pantalla 10 - Informe Admin */}
+        <Tabs.Screen
+          name="informeadmin"
+          options={{
+            title: "informeadmin",
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon
+                name={focused ? "information-outline" : "information"}
+=======
             title: "preguntasFrecuentes",
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon
                 name={focused ? "help-circle" : "help-circle-outline"}
+>>>>>>> main
                 color={color}
               />
             ),
           }}
         />
 
+<<<<<<< HEAD
+=======
         {/* Pantalla 10 - Informe Admin */}
         <Tabs.Screen
           name="informeadmin"
@@ -148,6 +173,7 @@ export default function TabLayout() {
           }}
         />
 
+>>>>>>> main
         {/* Pantalla 11 - Informe Campesino */}
         <Tabs.Screen
           name="informecampesino"
@@ -166,6 +192,9 @@ export default function TabLayout() {
         <Tabs.Screen
           name="Perfil"
           options={{
+<<<<<<< HEAD
+            href: null, // Elimina la barra de pestañas
+=======
             title: "perfil",
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon
@@ -173,6 +202,7 @@ export default function TabLayout() {
                 color={color}
               />
             ),
+>>>>>>> main
           }}
         />
 
@@ -180,6 +210,9 @@ export default function TabLayout() {
         <Tabs.Screen
           name="descripcionProducto"
           options={{
+<<<<<<< HEAD
+            href: null, // Elimina la barra de pestañas
+=======
             title: "Dscripción del producto",
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon
@@ -187,6 +220,7 @@ export default function TabLayout() {
                 color={color}
               />
             ),
+>>>>>>> main
           }}
         />
 
