@@ -1,69 +1,61 @@
 name: CI/CD - Build & Deploy to VPS
 
-#  Triggers: define cuándo se ejecuta el flujo
+# CUÁNDO EJECUTAR ESTE FLUJO:
 on:
-  pull_request:  # Cuando alguien crea o actualiza un PR hacia la rama main
+  pull_request:      # Se activa cuando se crea o actualiza un Pull Request hacia main
     branches:
       - main
-  push:           # Cuando hay un push (directo o por merge) en la rama main
+  push:              # Se activa cuando hay un push directo o merge hacia main
     branches:
       - main
 
 jobs:
-  #  PRUEBA DE COMPILACIÓN (Build Check)
-  # Este job se ejecuta cuando se abre o actualiza un Pull Request hacia main
+  # JOB 1: Verificación de compilación en Pull Requests
   check_build:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request'  # Solo se ejecuta si es un PR
 
     steps:
-      # 1. Clona el repositorio para trabajar con el código
-      - name: Checkout repository
+      - name: Clonar el repositorio
         uses: actions/checkout@v2
 
-      # 2. Instala dependencias del proyecto
-      - name: Install dependencies
+      - name: Instalar dependencias
         run: npm install
 
-      # 3. Intenta construir la app en modo web (con Expo)
-      - name: Build with Expo
+      - name: Compilar el proyecto con Expo (modo web)
         run: npx expo export --platform web
 
-  #  DEPLOY REAL A PRODUCCIÓN
-  # Este job se ejecuta únicamente cuando hay un push a la rama main
+  # JOB 2: Deploy automático en producción (solo cuando se hace push a main)
   deploy:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
+    if: github.event_name == 'push'  # Solo se ejecuta en push a main
 
     steps:
-      # 1. Clona el repositorio para trabajar con el código
-      - name: Checkout repository
+      - name: Clonar el repositorio
         uses: actions/checkout@v2
 
-      # 2. Configura el agente SSH usando tu clave privada guardada en los secretos de GitHub
-      - name: Set up SSH
+      - name: Configurar SSH (acceso al VPS)
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      # 3. Agrega la IP del servidor al archivo known_hosts para evitar errores de autenticación SSH
-      - name: Add VPS to known_hosts
+      - name: Agregar el VPS a known_hosts (evitar warning en primera conexión)
         run: |
           ssh-keyscan -H ${{ secrets.VPS_IP }} >> ~/.ssh/known_hosts
 
-      # 4. Instala dependencias y construye la app con Expo (modo web)
-      - name: Install & Build with Expo
+      - name: Crear archivo .env con secretos (URL del backend)
+        run: |
+          echo "EXPO_PUBLIC_API_URL=${{ secrets.EXPO_PUBLIC_API_URL }}" > .env
+
+      - name: Instalar dependencias y compilar con Expo
         run: |
           npm install
           npx expo export --platform web
 
-      # 5. Usa `rsync` para enviar los archivos generados al servidor
-      # Usamos variables secretas para ocultar el usuario y la IP
-      - name: Deploy to VPS using rsync
+      - name: Subir archivos compilados al VPS vía rsync
         run: |
           rsync -avz --delete ./dist/ ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}:/var/www/mifincaapp/
 
-      # 6. Reinicia el servidor web Nginx para aplicar los cambios
-      - name: Restart Nginx
+      - name: Reiniciar Nginx para aplicar cambios
         run: |
           ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }} 'sudo systemctl restart nginx'
