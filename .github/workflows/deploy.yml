@@ -1,6 +1,7 @@
 name: CI/CD - Build & Deploy to VPS
 
-# CUÁNDO EJECUTAR ESTE FLUJO:
+
+#  Triggers: define cuándo se ejecuta el flujo
 on:
   pull_request:      # Se activa cuando se crea o actualiza un Pull Request hacia main
     branches:
@@ -10,7 +11,8 @@ on:
       - main
 
 jobs:
-  # JOB 1: Verificación de compilación en Pull Requests
+
+  # Este job se ejecuta cuando se abre o actualiza un Pull Request hacia main
   check_build:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'  # Solo se ejecuta si es un PR
@@ -25,7 +27,8 @@ jobs:
       - name: Compilar el proyecto con Expo (modo web)
         run: npx expo export --platform web
 
-  # JOB 2: Deploy automático en producción (solo cuando se hace push a main)
+  #  DEPLOY REAL A PRODUCCIÓN
+  # Este job se ejecuta únicamente cuando hay un push a la rama main
   deploy:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'  # Solo se ejecuta en push a main
