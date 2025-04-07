@@ -1,0 +1,64 @@
+name: CI/CD - Build & Deploy to VPS
+
+
+#  Triggers: define cuándo se ejecuta el flujo
+on:
+  pull_request:      # Se activa cuando se crea o actualiza un Pull Request hacia main
+    branches:
+      - main
+  push:              # Se activa cuando hay un push directo o merge hacia main
+    branches:
+      - main
+
+jobs:
+
+  # Este job se ejecuta cuando se abre o actualiza un Pull Request hacia main
+  check_build:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'  # Solo se ejecuta si es un PR
+
+    steps:
+      - name: Clonar el repositorio
+        uses: actions/checkout@v2
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Compilar el proyecto con Expo (modo web)
+        run: npx expo export --platform web
+
+  #  DEPLOY REAL A PRODUCCIÓN
+  # Este job se ejecuta únicamente cuando hay un push a la rama main
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'  # Solo se ejecuta en push a main
+
+    steps:
+      - name: Clonar el repositorio
+        uses: actions/checkout@v2
+
+      - name: Configurar SSH (acceso al VPS)
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Agregar el VPS a known_hosts (evitar warning en primera conexión)
+        run: |
+          ssh-keyscan -H ${{ secrets.VPS_IP }} >> ~/.ssh/known_hosts
+
+      - name: Crear archivo .env con secretos (URL del backend)
+        run: |
+          echo "EXPO_PUBLIC_API_URL=${{ secrets.EXPO_PUBLIC_API_URL }}" > .env
+
+      - name: Instalar dependencias y compilar con Expo
+        run: |
+          npm install
+          npx expo export --platform web
+
+      - name: Subir archivos compilados al VPS vía rsync
+        run: |
+          rsync -avz --delete ./dist/ ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}:/var/www/mifincaapp/
+
+      - name: Reiniciar Nginx para aplicar cambios
+        run: |
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }} 'sudo systemctl restart nginx'
