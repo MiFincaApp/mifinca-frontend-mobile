@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, ScrollView, View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 import Header from '@/components/header/header';
+import Footer from '@/components/footer/footer';
 
 const icon = require('@/assets/images/icon.png');
 const phoneIcon = require('@/assets/images/Telefono.png');
@@ -47,10 +48,7 @@ const descripcionProducto = () => {
             </View>
             
             {/* Footer */}
-            <View style={styles.footer}>
-                <TouchableOpacity style={styles.contactInfo}><Image source={phoneIcon} style={styles.footerIcon} /><Text>Contáctanos</Text></TouchableOpacity>
-                <View style={styles.supportSection}><TextInput style={styles.input} placeholder="Soporte" /><Image source={supportIcon} style={styles.footerIcon} /></View>
-            </View>
+            <Footer />
         </ScrollView>
     );
 };

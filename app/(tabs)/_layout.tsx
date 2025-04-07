@@ -30,13 +30,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="soporte"
           options={{
-            title: "Soporte",
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? "help-circle" : "help-circle-outline"}
-                color={color}
-              />
-            )
+            href:null,
           }}
         />
         {/* pantalla 6 - catalogo de productos */}
