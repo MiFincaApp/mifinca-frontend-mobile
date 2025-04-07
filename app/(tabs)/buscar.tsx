@@ -2,6 +2,7 @@ import React from "react";
 import {View,Text,Image,TouchableOpacity,StyleSheet,ScrollView,} from "react-native";
 import { useRouter } from 'expo-router'; // importamos el expo router
 import Header from '@/components/header/header';
+import Footer from '@/components/footer/footer'
 
 
 const icon = require('@/assets/images/logo.png');
@@ -69,6 +70,7 @@ const PaymentMethodsScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
+      <Footer />
     </ScrollView>
   );
 };
