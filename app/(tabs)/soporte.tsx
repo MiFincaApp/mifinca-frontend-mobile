@@ -2,8 +2,6 @@ import React from "react";
 import {StyleSheet, ScrollView, View, Text, Image, TouchableOpacity, Pressable} from "react-native";
 import Header from '@/components/header/header';
 import { useRouter } from 'expo-router'; // importamos el expo router
-import Footer from '@/components/footer/footer'; //Aseguramos que el footer esté presente
-
 
 const icon = require('@/assets/images/LogoMiFinca.png');
 const iconw = require('@/assets/images/whatsapp.png');

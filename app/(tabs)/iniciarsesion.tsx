@@ -1,13 +1,15 @@
+import { useRoute } from "@react-navigation/native";
 import React, { useState } from "react";
-import { StyleSheet, TextInput, Button, View, Image} from "react-native";
+import { StyleSheet, TextInput, Button, View, Image, Text } from "react-native";
+import { useRouter } from 'expo-router';
 
 //Esta funsion
 export default function iniciarsesion() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter(); // usamos el router de expo
 
-  
 
   //Esta funcion maneja el envio del formulario al hacer click
   const iniciar = () => {
@@ -21,7 +23,7 @@ export default function iniciarsesion() {
     <View style={styles.container}>
       <Image
         source={require("@/assets/images/LogoMiFinca.png")}
-      
+
         style={styles.logo}
       />
 
@@ -45,6 +47,11 @@ export default function iniciarsesion() {
         onChangeText={setPassword}
       />
       <Button title="Iniciar sesión" onPress={iniciar} />
+
+      <View>
+        <Text style={styles.account}> No tienes cuenta?</Text>
+      </View>
+      <Button title="Registrarse" onPress={() => router.push('/register')}/>
     </View>
   );
 }
@@ -61,7 +68,7 @@ const styles = StyleSheet.create({
     width: 230,
     height: 230,
     marginBottom: 30,
-    borderRadius: 115, 
+    borderRadius: 115,
   },
   input: {
     height: 40,
@@ -71,4 +78,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     width: 350
   },
+  account:{
+    textAlign:"center",
+    justifyContent:"center"
+  }
 });
