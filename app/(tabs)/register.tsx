@@ -1,74 +1,155 @@
 import React, { useState } from "react";
-import { StyleSheet, TextInput, Button, View, Image} from "react-native";
+import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
 
-//Esta funsion
 export default function RegisterScreen() {
-  const [username, setUsername] = useState("");
+  const [userType, setUserType] = useState("");
+  const [docType, setDocType] = useState("");
+  const [docNumber, setDocNumber] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  
-
-  //Esta funcion maneja el envio del formulario al hacer click
   const handleRegister = () => {
-    console.log("Usuario registrado", { username, email, password });
-    setUsername("");
-    setEmail("");
-    setPassword("");
+    console.log("Datos del usuario:", {
+      userType,
+      docType,
+      docNumber,
+      fullName,
+      phone,
+      email,
+      password,
+    });
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Image
         source={require("@/assets/images/LogoMiFinca.png")}
-      
         style={styles.logo}
       />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Nombre de usuario"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Correo electronico"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Contraseña"
-        secureTextEntry={true}
-        value={password}
-        onChangeText={setPassword}
-      />
-      <Button title="Registrar" onPress={handleRegister} />
-    </View>
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>Quien eres:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ej: Campesino, Comprador"
+          value={userType}
+          onChangeText={setUserType}
+        />
+      </View>
+
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>Tipo de documento:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ej: Cédula, Pasaporte"
+          value={docType}
+          onChangeText={setDocType}
+        />
+      </View>
+
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>N° del documentación:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ingrese documento"
+          value={docNumber}
+          onChangeText={setDocNumber}
+          keyboardType="numeric"
+        />
+      </View>
+
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>Nombre completo:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ingrese su nombre"
+          value={fullName}
+          onChangeText={setFullName}
+        />
+      </View>
+
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>Teléfono:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ingrese su número"
+          value={phone}
+          onChangeText={setPhone}
+          keyboardType="phone-pad"
+        />
+      </View>
+
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>Correo electrónico:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ingrese un correo"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+        />
+      </View>
+
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>Contraseña:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ingrese una contraseña"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+      </View>
+
+      <TouchableOpacity style={styles.button} onPress={handleRegister}>
+        <Text style={styles.buttonText}>Registrarse</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-    justifyContent: "center",
-    alignItems: "center",
     padding: 20,
+    alignItems: "center",
+    backgroundColor: "#fff",
   },
   logo: {
-    width: 230, // Ajusta el ancho del logo
-    height: 230, // Ajusta la altura del logo
-    marginBottom: 30, // Espacio entre el logo y el primer campo de entrada
-    borderRadius: 115, // borde del logo, ya que es cuadrado.
+    width: 150,
+    height: 150,
+    marginBottom: 20,
+    resizeMode: "contain",
+  },
+  inputGroup: {
+    width: "100%",
+    marginBottom: 15,
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 5,
+    color: "#000",
   },
   input: {
-    height: 40,
-    borderColor: "#ccc",
     borderWidth: 1,
-    marginBottom: 20,
+    borderColor: "#ccc",
+    borderRadius: 6,
     paddingHorizontal: 10,
-    width: 350
+    height: 40,
+    backgroundColor: "#fff",
+  },
+  button: {
+    backgroundColor: "#c4001d",
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
