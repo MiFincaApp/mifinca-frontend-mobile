@@ -26,6 +26,20 @@ export default function TabLayout() {
           }}
         />
 
+        {/* pantalla 1 - iniciar sesion */}
+        <Tabs.Screen
+          name="iniciarsesion"
+          options={{
+            title: "iniciar sesion",
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon
+                name={focused ? "person-add" : "person-add-outline"}
+                color={color}
+              />
+            ),
+          }}
+        />
+
         {/* pantalla 2 - soporte */}
         <Tabs.Screen
           name="soporte"
