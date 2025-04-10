@@ -26,7 +26,7 @@ export default function TabLayout() {
           }}
         />
 
-        {/* pantalla 1 - iniciar sesion */}
+        {/* pantalla 1 - iniciar sesion  <PRUEBA>*/}
         <Tabs.Screen
           name="iniciarsesion"
           options={{
