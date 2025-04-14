@@ -1,30 +1,35 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, Pressable, } from "react-native";
-import { useRouter } from 'expo-router'; // importamos el expo router
+import { View, Image, TextInput, StyleSheet, Pressable } from "react-native";
+import { useRouter } from 'expo-router';
 
 const icon = require("@/assets/images/logo.png");
 
-const header = () => {
-  const router = useRouter(); // usamos el router de expo
+const Header: React.FC = () => {
+  const router = useRouter();
   return (
     <View style={styles.header}>
+	<Pressable onPress={() => router.push('/')}>
+      		<Image source={icon} style={styles.logo} />
+	</Pressable>
 
-      <Pressable onPress={() => router.push('/')}>
-        <Image source={icon} style={styles.logo} />
-      </Pressable>
+      <TextInput
+        style={styles.searchBar}
+        placeholder="Buscar..."
+        placeholderTextColor="#888"
+      />
 
       <View style={styles.headerRight}>
-        <Pressable onPress={() => router.push('/nosotros')}>
-          <Text style={styles.headerText}>Obten nuestra app</Text>
+	<Pressable onPress={() => router.push('/nosotros')}>
+        	<Image source={require("@/assets/images/header/nosotros.png")} style={styles.icon} />
+	</Pressable>
+	<Pressable onPress={() => router.push('/estadopedido')}>
+        	<Image source={require("@/assets/images/header/estadopedido.png")} style={styles.icon} />
         </Pressable>
-        <Pressable onPress={() => router.push('/estadopedido')}>
-          <Text style={styles.headerText}>Mis pedidos</Text>
-        </Pressable>
-        <Text style={styles.headerText}>Carrito</Text>
-        <Pressable onPress={() => router.push('/Perfil')}>
-          <Text style={styles.headerText}>Cuenta</Text>
-        </Pressable>
-      </View>
+		<Image source={require("@/assets/images/header/carrito.png")} style={styles.icon} />
+	<Pressable onPress={() => router.push('/Perfil')}>
+		<Image source={require("@/assets/images/header/cuenta.png")} style={styles.icon} />
+      	</Pressable>
+       </View>
     </View>
   );
 };
@@ -34,39 +39,36 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
+    backgroundColor: "#fff",
   },
   logo: {
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
     resizeMode: "contain",
-  },
-  headerRight: {
-    flexDirection: "row",
-    flexWrap: "wrap", // Permite que los elementos pasen a la siguiente línea si no caben
-    justifyContent: "flex-end", // Alinea los elementos a la derecha sin separarlos demasiado
-    flexShrink: 1, // Evita que el contenedor crezca más de lo necesario
-  },
-
-  headerText: {
-    fontSize: 12,
-    color: "#000",
-    marginHorizontal: 5, // Reduce el espacio horizontal
-    flexShrink: 1, // Evita que el texto se salga de la pantalla
   },
   searchBar: {
     flex: 1,
-    marginLeft: 20,
-    padding: 10,
+    height: 40,
     borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 5,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    backgroundColor: "#f8f8f8",
+    marginHorizontal: 10,
+  },
+  headerRight: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  icon: {
+    width: 25,
+    height: 25,
+    marginHorizontal: 8,
   },
 });
 
-export default header;
-
-
-//Se creo un componente header para optimizar el codigo de la app
+export default Header;
