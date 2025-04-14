@@ -2,6 +2,7 @@ import React from "react";
 import {View,Text,Image,TouchableOpacity,StyleSheet,ScrollView,} from "react-native";
 import { useRouter } from 'expo-router'; // importamos el expo router
 import Header from '@/components/header/header';
+import Footer from '@/components/footer/footer'
 
 
 const tomatepera = require ('@/assets/images/tomatepera.jpeg');
@@ -18,7 +19,6 @@ const PaymentMethodsScreen = () => {
     <ScrollView contentContainerStyle={styles.container}>
       
       {/* Header */}
-
       <View>
         <Header />
       </View>
@@ -71,6 +71,7 @@ const PaymentMethodsScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
+      <Footer />
     </ScrollView>
   );
 };

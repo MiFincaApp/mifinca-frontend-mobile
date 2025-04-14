@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import Header from '@/components/header/header'; //Aseguramos que el header esté presente
-import Footer from '@/components/footer/footer'; //Aseguramos que el footer esté presente
 
 // const API_URL = ""; // Cambia según tu entorno
 const API_URL = process.env.EXPO_PUBLIC_API_URL!; //Aqui va el url del api
@@ -56,9 +55,6 @@ const index = () => {
           <Text style={styles.loading}>Cargando productos...</Text>
         )}
       </View>
-
-      {/* Footer */}
-      <Footer />
     </ScrollView>
   );
 };
