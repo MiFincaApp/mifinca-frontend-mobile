@@ -155,6 +155,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     fontSize: 16,
   },
-});
+}
+);
 
 export default Header;
