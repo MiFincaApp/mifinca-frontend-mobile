@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
 import Header from '@/components/header/header';
 
+
 const stats = {
     mas_vendido: {
       nombre: "Café Orgánico",
@@ -31,6 +32,7 @@ const InformeCampesino = () => {
       <ScrollView contentContainerStyle={styles.container}>
         {/* Header */}
         <Header />
+
 
         <Text style={styles.title}>Informes de Ventas - Finca El Paraíso</Text>
         <View style={styles.statsGrid}>
@@ -70,7 +72,7 @@ const styles = StyleSheet.create({
       backgroundColor: "#fff",
       padding: 10,
     },
-    
+
     title: {
         textAlign: "center",
         fontSize: 24,

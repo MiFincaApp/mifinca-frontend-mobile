@@ -9,12 +9,13 @@ const iconbbva = require('@/assets/images/BBVA-logo.png');
 const iconbancolombia = require('@/assets/images/bancolombia.png');
 const iconnequi = require('@/assets/images/nequi.jpg');
 
-
 const PaymentMethodsScreen = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      
       {/* Header */}
       <Header />
+
 
       {/* Title */}
       <Text style={styles.title}>SELECCIONE SU MÉTODO DE PAGO</Text>

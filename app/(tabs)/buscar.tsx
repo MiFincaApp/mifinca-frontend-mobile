@@ -4,7 +4,6 @@ import { useRouter } from 'expo-router'; // importamos el expo router
 import Header from '@/components/header/header';
 
 
-const icon = require('@/assets/images/logo.png');
 const tomatepera = require ('@/assets/images/tomatepera.jpeg');
 const tomatecherry = require ('@/assets/images/tomatecherry.jpeg');
 const tomateraf = require ('@/assets/images/tomateraf.jpeg');
@@ -12,15 +11,18 @@ const tomateverde = require ('@/assets/images/tomateverde.jpeg');
 const tomatedearbol = require ('@/assets/images/tomatedearbol.jpeg');
 const tomatebuey = require ('@/assets/images/tomatebuey.jpeg');
 
+
 const PaymentMethodsScreen = () => {
   const router = useRouter(); // usamos el router de expo
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      
       {/* Header */}
 
-      <Header /> // Este es el componente header el cual se creo en la carpeta components y se importa en el archivo donde se usa
+      <View>
+        <Header />
+      </View>
 
-      {/* Prueba de joseph */}
 
       {/* Catálogo */}
       <View style={styles.buscar}>

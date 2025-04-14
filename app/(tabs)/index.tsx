@@ -33,8 +33,11 @@ const index = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Agregamos el Header nuevamente */}
-      <Header />
+      
+      {/* Header */}
+      <View>
+        <Header />
+      </View>
 
       <Text style={styles.titulo}>Catálogo de Productos</Text>
 

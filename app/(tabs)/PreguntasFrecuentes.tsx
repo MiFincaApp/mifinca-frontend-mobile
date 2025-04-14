@@ -43,8 +43,11 @@ const faqs = [
 const PreguntasFrecuentes = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
+
       {/* Header */}
-      <Header />
+      <View>
+        <Header />
+      </View>
 
       {/* FAQ Section */}
       <View style={styles.faqContainer}>
@@ -70,7 +73,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 10,
   },
-  
+
   faqContainer: {
     flexGrow: 1,
     maxWidth: 1200,
