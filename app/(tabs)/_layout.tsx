@@ -44,16 +44,17 @@ export default function TabLayout() {
             )
           }}
         />
+        {/* Pantalla 3 - Tickets */}
         <Tabs.Screen
           name="tickets"
           options={{
             title: "Tickets",
-            tabBarIcon: ({ color, focused}) => (
+            tabBarIcon: ({ color, focused }) => (
               <TabBarIcon
                 name={focused ? "people" : "people-outline"}
                 color={color}
               />
-            )
+            ),
           }}
         />
         {/* pantalla 6 - catalogo de productos */} //esto es codigo prueba de freyman no borrar

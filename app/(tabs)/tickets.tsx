@@ -71,11 +71,11 @@ const styles=StyleSheet.create({
         marginHorizontal: 10,
     },
     main: {
-        flexDirection: "column", // Para que los botones se apilen verticalmente
-        gap: 10, // Espaciado entre mensajes
+        flexDirection: "column", 
+        gap: 10, 
     },
     methodButton: {
-        flexDirection: "row", // Para alinear imagen y texto horizontalmente
+        flexDirection: "row", 
         alignItems: "center",
         backgroundColor: "#f0f0f0",
         padding: 10,
@@ -93,4 +93,4 @@ const styles=StyleSheet.create({
     },
 })
 
-export default PaymentMethodsScreen;
+export default PaymentMethodsScreen;    
