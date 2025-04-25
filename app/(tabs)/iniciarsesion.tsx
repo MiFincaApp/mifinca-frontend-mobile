@@ -3,9 +3,10 @@ import React, { useState } from "react";
 import { StyleSheet, TextInput, Button, View, Image, Text } from "react-native";
 import { useRouter } from 'expo-router';
 
+const API_URL = process.env.EXPO_PUBLIC_API_URL!;
+
 //Esta funsion
 export default function iniciarsesion() {
-  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter(); // usamos el router de expo
@@ -13,8 +14,7 @@ export default function iniciarsesion() {
 
   //Esta funcion maneja el envio del formulario al hacer click
   const iniciar = () => {
-    console.log("Usuario registrado", { username, email, password });
-    setUsername("");
+    console.log("Usuario registrado", { email, password });
     setEmail("");
     setPassword("");
   };
@@ -29,16 +29,11 @@ export default function iniciarsesion() {
 
       <TextInput
         style={styles.input}
-        placeholder="Nombre de usuario"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <TextInput
-        style={styles.input}
         placeholder="Correo electronico"
         value={email}
         onChangeText={setEmail}
       />
+
       <TextInput
         style={styles.input}
         placeholder="Contraseña"
@@ -46,10 +41,10 @@ export default function iniciarsesion() {
         value={password}
         onChangeText={setPassword}
       />
-      <Button title="Iniciar sesión" onPress={iniciar} />
 
+      <Button title="Iniciar sesión" onPress={iniciar} />
       <View>
-        <Text style={styles.account}> No tienes cuenta?</Text>
+        <Text style={styles.account}> ¿No tienes cuenta? </Text>
       </View>
       <Button title="Registrarse" onPress={() => router.push('/register')}/>
     </View>

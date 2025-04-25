@@ -44,9 +44,16 @@ export default function TabLayout() {
         <Tabs.Screen
           name="soporte"
           options={{
-            href:null,
+            title: "soporte",
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon
+                name={focused ? "help" : "help-outline"}
+                color={color}
+              />
+            ),
           }}
         />
+
         {/* pantalla 6 - catalogo de productos */}
         <Tabs.Screen
           name="index"
@@ -103,18 +110,15 @@ export default function TabLayout() {
           }}
         />
 
-            {/* pantalla 7 - buscar */}
-            <Tabs.Screen
-              name="buscar"
-              options={{
-                title: "buscar",
-                tabBarIcon: ({ color, focused }) => (
-                  <TabBarIcon
-                    name={focused ? "search" : "search-outline"}
-                    color={color}
-                  />
-                ),
-              }}
+        {/* pantalla 7 - buscar */}
+        <Tabs.Screen
+          name="buscar"
+          options={{
+            title: "buscar",
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon
+                name={focused ? "search" : "search-outline"}
+                color={color}
               />
             ),
           }}
@@ -132,7 +136,13 @@ export default function TabLayout() {
         <Tabs.Screen
           name="PreguntasFrecuentes"
           options={{
-              href:null,
+            title: "Preguntas Frecuentes",
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon
+                name={focused ? "help-circle" : "help-circle-outline"}
+                color={color}
+              />
+            ),
           }}
         />
 
