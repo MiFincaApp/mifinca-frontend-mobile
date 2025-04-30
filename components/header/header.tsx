@@ -5,10 +5,8 @@ import { useRouter } from 'expo-router';
 
 /* Icons */
 const icon = require("@/assets/images/logo.png");
-import { BsPeopleFill } from "react-icons/bs";
-import { FaBoxesStacked } from "react-icons/fa6";
-import { FaShoppingCart } from "react-icons/fa";
-import { FaUserCircle } from "react-icons/fa";
+import { FontAwesome5, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
+
 
 const Header: React.FC = () => {
   
@@ -56,19 +54,15 @@ const Header: React.FC = () => {
       />
 
       <View style={styles.headerRight}>
-        <Pressable onPress={() => router.push('/nosotros')}>
-          <BsPeopleFill />
-        </Pressable>
+        <View style={styles.iconsMenu}>
+          <FontAwesome name="shopping-cart" size={24} color="black" />
+        </View>
 
-        <Pressable onPress={() => router.push('/estadopedido')}>
-          <FaBoxesStacked />
-        </Pressable>
-
-          <FaShoppingCart />
-
-        <TouchableOpacity onPress={() => router.push('/perfil')}>
-          <FaUserCircle />
-        </TouchableOpacity>
+        <View style={styles.iconsMenu}>
+          <TouchableOpacity onPress={() => router.push('/iniciarsesion')}>
+            <FontAwesome name="user-circle" size={24} color="black" />
+          </TouchableOpacity>
+          </View>
       </View>
 
       {/* va en la linea 72 onPress={handleAccountPress} */}
@@ -82,6 +76,19 @@ const Header: React.FC = () => {
           }}>
             <Text style={styles.menuItem}>Perfil</Text>
           </Pressable>
+          <Pressable onPress={() => {
+            setShowMenu(false);
+            router.push('/misordenes');
+          }}>
+            <Text style={styles.menuItem}>Mis órdenes</Text>
+          </Pressable>
+          <Pressable onPress={() => {
+            setShowMenu(false);
+            router.push('/nosotros');
+          }}>
+            <Text style={styles.menuItem}>Nosotros</Text>
+          </Pressable>
+
           <Pressable onPress={logout}>
             <Text style={styles.menuItem}>Cerrar sesión</Text>
           </Pressable>
@@ -123,6 +130,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  iconsMenu: {
+    marginHorizontal: 10,
+  },
+
   icon: {
     width: 25,
     height: 25,

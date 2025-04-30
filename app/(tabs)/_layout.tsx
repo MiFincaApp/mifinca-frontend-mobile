@@ -204,20 +204,6 @@ export default function TabLayout() {
           }}
         />
 
-        {/* Pantalla 15 - Administrador */}
-        <Tabs.Screen
-          name="administrador"
-          options={{
-            title: "Administrador",
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? "information-outline" : "information"}
-                color={color}
-              />
-            ),
-          }}
-        />
-
       </Tabs>
     </>
   );
