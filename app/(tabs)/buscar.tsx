@@ -5,7 +5,6 @@ import Header from '@/components/header/header';
 import Footer from '@/components/footer/footer'
 
 
-const icon = require('@/assets/images/logo.png');
 const tomatepera = require ('@/assets/images/tomatepera.jpeg');
 const tomatecherry = require ('@/assets/images/tomatecherry.jpeg');
 const tomateraf = require ('@/assets/images/tomateraf.jpeg');
@@ -13,15 +12,17 @@ const tomateverde = require ('@/assets/images/tomateverde.jpeg');
 const tomatedearbol = require ('@/assets/images/tomatedearbol.jpeg');
 const tomatebuey = require ('@/assets/images/tomatebuey.jpeg');
 
+
 const PaymentMethodsScreen = () => {
   const router = useRouter(); // usamos el router de expo
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      
       {/* Header */}
+      <View>
+        <Header />
+      </View>
 
-      <Header />
-
-      {/* Prueba de joseph */}
 
       {/* Catálogo */}
       <View style={styles.buscar}>

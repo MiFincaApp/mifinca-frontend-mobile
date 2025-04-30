@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
 import Header from '@/components/header/header';
 
+
 const order = {
   number: '12345',
   status: 'En proceso',
@@ -13,11 +14,11 @@ const order = {
 };
 
 const estadopedido = () => {
-  
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Header */}
       <Header />
+
       
       {/* Contenido */}
       <View style={styles.container}>
@@ -71,7 +72,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 10,
   },
-
   main: {
     flexGrow: 1,
     padding: 40,

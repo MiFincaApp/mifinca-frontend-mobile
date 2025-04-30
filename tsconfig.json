@@ -2,6 +2,8 @@
   "extends": "./node_modules/expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "paths": {
       "@/*": [
         "./*"
@@ -9,6 +11,7 @@
     }
   },
   "include": [
+    "app.config.ts",
     "**/*.ts",
     "**/*.tsx"
   ]

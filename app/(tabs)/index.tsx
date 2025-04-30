@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
-import Header from '@/components/header/header'; //Aseguramos que el header esté presente
+import Header from '@/components/header/header';
+import Constants from "expo-constants"; // 👈 Agregado
 
-// const API_URL = ""; // Cambia según tu entorno
-const API_URL = process.env.EXPO_PUBLIC_API_URL!; //Aqui va el url del api
-
+const API_URL = Constants.expoConfig?.extra?.apiUrl!;
 
 interface Producto {
   id_producto: number;
@@ -32,11 +31,10 @@ const index = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Agregamos el Header nuevamente */}
-      <Header />
-
+      <View>
+        <Header />
+      </View>
       <Text style={styles.titulo}>Catálogo de Productos</Text>
-
       <View style={styles.catalogo}>
         {productos.length > 0 ? (
           <View style={styles.grid}>
@@ -55,6 +53,7 @@ const index = () => {
     </ScrollView>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: { flexGrow: 1, backgroundColor: "#fff", padding: 10 },
