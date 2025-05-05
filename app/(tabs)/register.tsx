@@ -25,7 +25,7 @@ export default function RegisterScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Image
-        source={require("@/assets/images/LogoMiFinca.png")}
+        source={require("@/assets/images/logos/LogoMiFinca.png")}
         style={styles.logo}
       />
 

@@ -3,9 +3,9 @@ import { View, Text, Image, TouchableOpacity, ScrollView,FlatList, StyleSheet } 
 import Header from '@/components/header/header';
 
 const productos = [
-  { id: "1", nombre: "Fresa", precio: 7800, imagen: require("@/assets/images/fresa.png") },
-  { id: "2", nombre: "Mango", precio: 7800, imagen: require("@/assets/images/mango.png") },
-  { id: "3", nombre: "Zanahoria", precio: 7800, imagen: require("@/assets/images/zanahoria.png") }
+  { id: "1", nombre: "Fresa", precio: 7800, imagen: require("@/assets/images/Frutas/fresa.png") },
+  { id: "2", nombre: "Aguacate", precio: 7800, imagen: require("@/assets/images/Frutas/aguacate.jpeg") },
+  { id: "3", nombre: "Zanahoria", precio: 7800, imagen: require("@/assets/images/Frutas/zanahoria.png") }
 ];
 
 const CarritoScreen= () => {

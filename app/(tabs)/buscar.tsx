@@ -1,20 +1,20 @@
 import React from "react";
 import {View,Text,Image,TouchableOpacity,StyleSheet,ScrollView,} from "react-native";
-import { useRouter } from 'expo-router'; // importamos el expo router
+import { useRouter } from 'expo-router';
 import Header from '@/components/header/header';
 import Footer from '@/components/footer/footer'
 
 
-const tomatepera = require ('@/assets/images/tomatepera.jpeg');
-const tomatecherry = require ('@/assets/images/tomatecherry.jpeg');
-const tomateraf = require ('@/assets/images/tomateraf.jpeg');
-const tomateverde = require ('@/assets/images/tomateverde.jpeg');
-const tomatedearbol = require ('@/assets/images/tomatedearbol.jpeg');
-const tomatebuey = require ('@/assets/images/tomatebuey.jpeg');
+const tomatepera = require ('@/assets/images/Frutas/tomatepera.jpeg');
+const tomatecherry = require ('@/assets/images/Frutas/tomatecherry.jpeg');
+const tomateraf = require ('@/assets/images/Frutas/tomateraf.jpeg');
+const tomateverde = require ('@/assets/images/Frutas/tomateverde.jpeg');
+const tomatedearbol = require ('@/assets/images/Frutas/tomatedearbol.jpeg');
+const tomatebuey = require ('@/assets/images/Frutas/tomatebuey.jpeg');
 
 
 const PaymentMethodsScreen = () => {
-  const router = useRouter(); // usamos el router de expo
+  const router = useRouter();
   return (
     <ScrollView contentContainerStyle={styles.container}>
       

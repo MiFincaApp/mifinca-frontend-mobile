@@ -14,7 +14,7 @@ const PersonnelManagement = () => {
       {/* Header */}
       
       <View style={styles.header}>
-        <Image source={require("@/assets/images/logo.png")} style={styles.logo} />
+        <Image source={require("@/assets/images/logos/logo.png")} style={styles.logo} />
         <TextInput placeholder="Search" style={styles.searchBar} />
       </View>
       
@@ -32,7 +32,7 @@ const PersonnelManagement = () => {
       <ScrollView style={styles.personnelList}>
         {personnelData.map((person) => (
           <View key={person.id} style={styles.personnel}>
-            <Image source={require("@/assets/images/administrador.png")} style={styles.personImage} />
+            <Image source={require("@/assets/images/Roles/administrador.png")} style={styles.personImage} />
             <View style={styles.details}>
               <Text>Usuario: {person.name}</Text>
               <Text>Cargo: {person.role}</Text>

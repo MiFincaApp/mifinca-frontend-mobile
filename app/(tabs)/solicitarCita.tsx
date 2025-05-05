@@ -74,7 +74,7 @@ const SolicitarCita = () => {
       </View>
 
       {/* Logo */}
-      <Image source={require("@/assets/images/logo.png")} style={styles.logo2} />
+      <Image source={require("@/assets/images/logos/logo.png")} style={styles.logo2} />
     </View>
     </ScrollView>
   );

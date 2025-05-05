@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 
 /* Icons */
-const icon = require("@/assets/images/logo.png");
+const icon = require("@/assets/images/logos/logo.png");
 import { FontAwesome5, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 
 

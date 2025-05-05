@@ -2,8 +2,8 @@ import React from "react";
 import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Pressable } from "react-native";
 import { useRouter } from 'expo-router';
 
-const phoneIcon = require('@/assets/images/Telefono.png');
-const supportIcon = require('@/assets/images/Soporte.png');
+const phoneIcon = require('@/assets/images/Footer/Telefono.png');
+const supportIcon = require('@/assets/images/Footer/Soporte.png');
 
 const Footer: React.FC = () => {
     const router = useRouter();
