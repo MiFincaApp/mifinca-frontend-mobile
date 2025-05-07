@@ -15,7 +15,7 @@ const administracion = () => {
       <ScrollView contentContainerStyle={styles.chatContainer}>
         {messages.map((msg, index) => (
           <View key={index} style={styles.chatMessage}>
-            <Image source={require("@/assets/images/usuario.png")} style={styles.avatar} />
+            <Image source={require("@/assets/images/header/cuenta.png")} style={styles.avatar} />
             <Text style={styles.text}><Text style={styles.sender}>{msg.sender}:</Text> {msg.text}</Text>
           </View>
         ))}

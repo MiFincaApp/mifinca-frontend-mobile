@@ -13,6 +13,7 @@ const userProfile = {
 const Perfil = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      
       {/* Header */}
       <Header />
 

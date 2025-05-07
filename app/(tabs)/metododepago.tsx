@@ -2,10 +2,10 @@ import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import Header from '@/components/header/header';
 
-const iconpse = require('@/assets/images/pse.png');
-const iconbbva = require('@/assets/images/BBVA-logo.png');
-const iconbancolombia = require('@/assets/images/bancolombia.png');
-const iconnequi = require('@/assets/images/nequi.jpg');
+const iconpse = require('@/assets/images/Bancos/pse.png');
+const iconbbva = require('@/assets/images/Bancos/BBVA-logo.png');
+const iconbancolombia = require('@/assets/images/Bancos/bancolombia.png');
+const iconnequi = require('@/assets/images/Bancos/nequi.jpg');
 
 const PaymentMethodsScreen = () => {
   return (

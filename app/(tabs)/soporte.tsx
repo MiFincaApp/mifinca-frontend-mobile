@@ -1,10 +1,10 @@
 import React from "react";
 import {StyleSheet, ScrollView, View, Text, Image, TouchableOpacity, Pressable} from "react-native";
 import Header from '@/components/header/header';
-import { useRouter } from 'expo-router'; // importamos el expo router
+import { useRouter } from 'expo-router';
 
-const icon = require('@/assets/images/LogoMiFinca.png');
-const iconw = require('@/assets/images/whatsapp.png');
+const icon = require('@/assets/images/logos/LogoMiFinca.png');
+const iconw = require('@/assets/images/Redes Sociales/whatsapp.png');
 
 const soporte = () => {
     const router = useRouter(); // usamos el router de expo

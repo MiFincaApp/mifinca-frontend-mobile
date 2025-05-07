@@ -2,9 +2,9 @@ import React from "react";
 import {StyleSheet, ScrollView, View, Text, Image, TouchableOpacity} from "react-native";
 import Header from '@/components/header/header';
 
-const banner = require('@/assets/images/banner.jpg');
-const Astore = require('@/assets/images/appstore.png');
-const Gplay = require('@/assets/images/googleplay.png');
+const banner = require('@/assets/images/campo.jpg');
+const Astore = require('@/assets/images/Redes Sociales/appstore.png');
+const Gplay = require('@/assets/images/Redes Sociales/googleplay.png');
 
 
 const nosotros = () => {
