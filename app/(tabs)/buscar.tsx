@@ -12,6 +12,7 @@ const tomateverde = require ('@/assets/images/Frutas/tomateverde.jpeg');
 const tomatedearbol = require ('@/assets/images/Frutas/tomatedearbol.jpeg');
 const tomatebuey = require ('@/assets/images/Frutas/tomatebuey.jpeg');
 
+// prieba
 
 const PaymentMethodsScreen = () => {
   const router = useRouter();
