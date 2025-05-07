@@ -121,6 +121,3 @@ const styles = StyleSheet.create({
 });
 
 export default PaymentMethodsScreen;
-
-
-//interface de Freyman #3
