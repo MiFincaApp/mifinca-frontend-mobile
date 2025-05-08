@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, TextInput, Button, View, Image, Text, ActivityIndicator, Alert } from "react-native";
 import { useRouter } from 'expo-router';
+import Header from '@/components/header/header';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL!;
@@ -63,6 +64,8 @@ export default function IniciarSesion() {
 
   return (
     <View style={styles.container}>
+      <Header />
+
       <Image
         source={require("@/assets/images/logos/LogoMiFinca.png")}
         style={styles.logo}
