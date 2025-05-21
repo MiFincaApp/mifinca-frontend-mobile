@@ -34,7 +34,12 @@ const config: ExpoConfig = {
   ],
   newArchEnabled: true,
   extra: {
-    apiUrl: process.env.EXPO_PUBLIC_API_URL
+    apiUrl: process.env.EXPO_PUBLIC_API_URL,
+    apiRegisterUrl: process.env.EXPO_PUBLIC_API_URL_REGISTER,
+    apiLoginUrl: process.env.EXPO_PUBLIC_API_URL_LOGIN,
+    apiTokenUrl: process.env.EXPO_PUBLIC_API_URL_TOKEN,
+    apiLogoutUrl: process.env.EXPO_PUBLIC_API_URL_LOGOUT,
+    apiPerfilUrl: process.env.EXPO_PUBLIC_API_URL_PERFIL,
   }
 };
 

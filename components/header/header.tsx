@@ -3,6 +3,10 @@ import { View, Text, Image, TextInput, StyleSheet, Pressable, TouchableOpacity, 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useCarrito } from '@/components/context/carrito/carritocontext';
+import Constants from 'expo-constants';
+
+const API_URL_PERFIL = Constants.expoConfig?.extra?.apiPerfilUrl!;
+const API_URL_LOGOUT = Constants.expoConfig?.extra?.apiLogoutUrl!;
 
 /* Icons */
 const icon = require("@/assets/images/logos/logo.png");
@@ -12,37 +16,104 @@ import { FontAwesome } from '@expo/vector-icons';
 const Header: React.FC = () => {
   const [visible, setVisible] = useState(false);
   const { carrito, total } = useCarrito();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [rol, setRol] = useState<string | null>(null);
   
   const router = useRouter();
   
-  /*
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
-
   useEffect(() => {
-    const checkToken = async () => {
-      const token = await AsyncStorage.getItem("token");
-      setIsLoggedIn(!!token);
+    const fetchUserRole = async () => {
+      try {
+        const token = await AsyncStorage.getItem('accessToken');
+        if (!token) return;
+
+        setIsLoggedIn(true);
+
+        const response = await fetch(`${API_URL_PERFIL}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'USER-MIFINCA-CLIENT': 'mifincaapp-mobile-android',
+          },
+        });
+
+        if (!response.ok) throw new Error("Error al obtener el perfil");
+
+        const data = await response.json();
+        setRol(data.roles.nombre);
+      } catch (err) {
+        console.error("Error al obtener el rol:", err);
+      }
     };
 
-    checkToken();
+    fetchUserRole();
   }, []);
+
+  const logout = async () => {
+  try {
+    const token = await AsyncStorage.getItem('accessToken');
+    if (!token) {
+      // No hay token para enviar a la API, pero sí eliminamos cualquier token almacenado
+      await AsyncStorage.removeItem('accessToken');
+      await AsyncStorage.removeItem('refreshToken');
+      setIsLoggedIn(false);
+      setRol(null);
+      setShowMenu(false);
+      router.push('/iniciarsesion');
+      return;
+    }
+
+    // Llamada a la API para cerrar sesión
+    const response = await fetch(API_URL_LOGOUT, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'USER-MIFINCA-CLIENT': 'mifincaapp-mobile-android',
+      },
+    });
+
+    if (response.ok) {
+      // Si la respuesta es exitosa, elimina los tokens y redirige
+      await AsyncStorage.removeItem('accessToken');
+      await AsyncStorage.removeItem('refreshToken');
+      setIsLoggedIn(false);
+      setRol(null);
+      setShowMenu(false);
+      router.push('/iniciarsesion');
+    } else {
+      // Si no es exitosa, no eliminar tokens ni redirigir.
+      // Opcional: puedes mostrar un mensaje o log
+      const errorData = await response.json();
+      console.error('Error en logout:', errorData.message || response.statusText);
+    }
+  } catch (error) {
+    // Error de red o inesperado: no eliminar tokens ni redirigir
+    console.error('Error en logout:', error);
+  }
+};
 
   const handleAccountPress = () => {
     if (isLoggedIn) {
       setShowMenu(prev => !prev);
     } else {
-      router.push('/login');
+      router.push('/iniciarsesion');
     }
   };
 
-  const logout = async () => {
-    await AsyncStorage.removeItem("token");
-    setIsLoggedIn(false);
-    setShowMenu(false);
-    router.push('/login');
+  const getIconSource = () => {
+    switch (rol) {
+      case 'cliente':
+        return require('@/assets/images/perfil/avatar-comprador.png');
+      case 'campesino':
+        return require('@/assets/images/perfil/avatar-vendedor.png');
+      case 'admin':
+        return require('@/assets/images/perfil/avatar-admin.png');
+      default:
+        return <FontAwesome name="user-circle" size={24} color="black" />
+    }
   };
-  */
 
   return (
     <View style={styles.header}>
@@ -64,10 +135,10 @@ const Header: React.FC = () => {
         </View>
 
         <View style={styles.iconsMenu}>
-          <TouchableOpacity onPress={() => router.push('/iniciarsesion')}>
-            <FontAwesome name="user-circle" size={24} color="black" />
+          <TouchableOpacity onPress={handleAccountPress}>
+            <Image source={getIconSource()} style={{ width: 28, height: 28, borderRadius: 14 }} />
           </TouchableOpacity>
-          </View>
+        </View>
       </View>
 
       {/* 🔽 Sidebar Modal */}
@@ -108,10 +179,8 @@ const Header: React.FC = () => {
         </View>
       </Modal>
 
-      {/* va en la linea 72 onPress={handleAccountPress} */}
-
-      
-      {/* {showMenu && (
+      {/* Menú desplegable de cuenta */}
+      {showMenu && (
         <View style={styles.dropdownMenu}>
           <Pressable onPress={() => {
             setShowMenu(false);
@@ -119,25 +188,12 @@ const Header: React.FC = () => {
           }}>
             <Text style={styles.menuItem}>Perfil</Text>
           </Pressable>
-          <Pressable onPress={() => {
-            setShowMenu(false);
-            router.push('/misordenes');
-          }}>
-            <Text style={styles.menuItem}>Mis órdenes</Text>
-          </Pressable>
-          <Pressable onPress={() => {
-            setShowMenu(false);
-            router.push('/nosotros');
-          }}>
-            <Text style={styles.menuItem}>Nosotros</Text>
-          </Pressable>
 
           <Pressable onPress={logout}>
             <Text style={styles.menuItem}>Cerrar sesión</Text>
           </Pressable>
         </View>
-      )} */}
-
+      )}
     </View>
   );
 };
