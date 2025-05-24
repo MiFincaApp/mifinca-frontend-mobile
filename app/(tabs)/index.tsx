@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from "rea
 import { useRouter } from 'expo-router';
 import Header from '@/components/header/header';
 import Constants from "expo-constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const API_URL = Constants.expoConfig?.extra?.apiUrl!;
 
@@ -40,36 +41,38 @@ const Carrusel = () => {
 };
 
 
-const index = () => {
-  const [productos, setProductos] = useState<Producto[]>([]);
-  const router = useRouter();
+  const index = () => {
+    const [productos, setProductos] = useState<Producto[]>([]);
+    const router = useRouter();
 
-  useEffect(() => {
-    const fetchProductos = async () => {
-      try {
-        const response = await fetch(API_URL);
-        const data: Producto[] = await response.json();
-        setProductos(data);
-      } catch (error) {
-        console.error("Error al cargar productos:", error);
-      }
-    };
+    useEffect(() => {
+      const fetchProductos = async () => {
+        try {
+          const response = await fetch(API_URL);
+          const data: Producto[] = await response.json();
+          setProductos(data);
+        } catch (error) {
+          console.error("Error al cargar productos:", error);
+        }
+      };
 
-    fetchProductos();
-  }, []);
+      fetchProductos();
+    }, []);
 
-  const handleProductClick = (id: number | undefined) => {
-  if (!id) {
-    console.warn('ID de producto no válido');
-    return;
-  }
+    const handleProductClick = (id: number | undefined) => {
+    if (!id) {
+      console.warn('ID de producto no válido');
+      return;
+    }
 
-  router.push({
-    pathname: '/descripcionProducto',
-    params:  { id: id.toString() },
-  });
-};
-  
+    
+
+    router.push({
+      pathname: '/descripcionProducto',
+      params:  { id: id.toString() },
+    });
+  };
+
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

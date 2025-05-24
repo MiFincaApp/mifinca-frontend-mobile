@@ -14,7 +14,7 @@ export default function IniciarSesion() {
   const [modalVisible, setModalVisible] = useState(false);
   const router = useRouter();
 
-  const handleUserTypeSelection = (tipo: "COMPRADOR" | "VENDEDOR") => {
+  const handleUserTypeSelection = (tipo: "COMPRADOR" | "CAMPESINO") => {
     setModalVisible(false);
     router.push({ 
       pathname: "/register", 
@@ -28,45 +28,64 @@ export default function IniciarSesion() {
     try {
       const tipoCliente = Platform.OS === "web" ? "WEB" : "MOVIL";
 
-      const response = await fetch(`${API_URL}/login`, {
-        method: 'POST',
+      const response = await fetch(`${API_URL}`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'USER-MIFINCA-CLIENT': 'mifincaapp-mobile-android',
+          "Content-Type": "application/json",
+          "USER-MIFINCA-CLIENT": "mifincaapp-mobile-android",
         },
         body: JSON.stringify({
-          username,
-          password,
+          username: username.trim(),
+          password: password.trim(),
           tipoCliente,
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Credenciales incorrectas');
+      const responseText = await response.text();
+
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch {
+        data = null;
       }
 
-      const data = await response.json();
+      if (!response.ok) {
+        // Aquí detectamos error 500 con mensaje específico
+        if (
+          response.status === 500 &&
+          data &&
+          data.error ===
+            "Ya tienes una sesión activa en este tipo de cliente: MOVIL"
+        ) {
+          throw new Error(
+            "No puedes tener más de dos sesiones móviles activas. Por favor, cierra sesión en otro dispositivo."
+          );
+        }
 
-      const accessToken = data.Token;
-      const refreshToken = data.refreshToken;
+        // Para otros errores, mostramos mensaje del backend o genérico
+        const mensajeError =
+          (data && (data.error || data.mensaje)) || "Credenciales incorrectas";
+        throw new Error(mensajeError);
+      }
+
+      // Si la respuesta es OK, parseamos tokens
+      const accessToken = data?.token;
+      const refreshToken = data?.refreshToken;
 
       if (!accessToken || !refreshToken) {
         throw new Error("No se recibieron los tokens correctamente");
       }
 
-      // Guardar ambos tokens
-      await AsyncStorage.setItem('accessToken', accessToken);
-      await AsyncStorage.setItem('refreshToken', refreshToken);
+      await AsyncStorage.setItem("accessToken", accessToken);
+      await AsyncStorage.setItem("refreshToken", refreshToken);
 
-      // Navegar a pantalla principal
-      router.push('/');
+      router.push("/");
 
-      // Limpiar inputs
       setUsername("");
       setPassword("");
-
     } catch (error: any) {
-      console.error('Error:', error);
+      console.error("Error:", error);
       Alert.alert("Error", error.message || "Hubo un problema al iniciar sesión");
     } finally {
       setLoading(false);
@@ -97,6 +116,7 @@ export default function IniciarSesion() {
           secureTextEntry={true}
           value={password}
           onChangeText={setPassword}
+          autoCapitalize="none"
         />
 
         {loading ? (
@@ -132,9 +152,9 @@ export default function IniciarSesion() {
 
               <TouchableOpacity
                 style={styles.modalButtonPrimary}
-                onPress={() => handleUserTypeSelection("VENDEDOR")}
+                onPress={() => handleUserTypeSelection("CAMPESINO")}
               >
-                <Text style={styles.modalButtonText}>VENDEDOR</Text>
+                <Text style={styles.modalButtonText}>CAMPESINO</Text>
               </TouchableOpacity>
 
               <TouchableOpacity

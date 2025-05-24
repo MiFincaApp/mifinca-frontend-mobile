@@ -8,14 +8,14 @@ const API_URL = Constants.expoConfig?.extra?.apiRegisterUrl!;
 
 export default function register() {
   const router = useRouter();
-  const { tipoUsuario: tipoUsuarioParam } = useLocalSearchParams<{ tipoUsuario: "VENDEDOR" | "COMPRADOR" }>();
+  const { tipoUsuario: tipoUsuarioParam } = useLocalSearchParams<{ tipoUsuario: "CAMPESINO" | "COMPRADOR" }>();
 
   const [nombre, setNombre] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const tipoUsuario = (tipoUsuarioParam || "") as "VENDEDOR" | "COMPRADOR" | "";
+  const tipoUsuario = (tipoUsuarioParam || "") as "CAMPESINO" | "COMPRADOR" | "";
   
 
   const handleRegister = async () => {
@@ -42,9 +42,26 @@ export default function register() {
         body: JSON.stringify(payload),
       });
 
+      const contentType = response.headers.get("Content-Type");
+
+      // Leer la respuesta como texto crudo
+      const rawText = await response.text();
+      let jsonData: any = null;
+
+      // Intentar parsear si el Content-Type indica que es JSON
+      if (contentType && contentType.includes("application/json")) {
+        try {
+          jsonData = JSON.parse(rawText);
+        } catch (jsonError) {
+          console.error("Error parseando JSON:", jsonError);
+          Alert.alert("Error", "La respuesta del servidor no es un JSON válido.");
+          return;
+        }
+      }
+
       if (response.ok) {
-        const data = await response.json();
-        console.log("Usuario registrado:", data);
+        console.log("Usuario registrado:", jsonData || rawText);
+
         Alert.alert("Éxito", "Usuario registrado correctamente");
         router.replace("/iniciarsesion");
 
@@ -52,11 +69,13 @@ export default function register() {
         setUsername("");
         setEmail("");
         setPassword("");
-
       } else {
-        const errorData = await response.json();
-        console.error("Error al registrar:", errorData);
-        Alert.alert("Error", errorData.message || "No se pudo registrar");
+        const message =
+          (jsonData && jsonData.message) ||
+          rawText ||
+          "No se pudo registrar";
+        console.error("Error al registrar:", message);
+        Alert.alert("Error", message);
       }
     } catch (error) {
       console.error("Error de red:", error);
@@ -74,7 +93,7 @@ export default function register() {
       />
 
       <Text style={styles.title}>
-        {tipoUsuario === "VENDEDOR" ? "Registro de Vendedor" : "Registro de Comprador"}
+        {tipoUsuario === "CAMPESINO" ? "Registro de CAMPESINO" : "Registro de Comprador"}
       </Text>
 
       <View style={styles.formWrapper}>
