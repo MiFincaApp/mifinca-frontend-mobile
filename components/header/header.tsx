@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+
 import { View, Text, Image, TextInput, StyleSheet, Pressable, TouchableOpacity, Modal, FlatList, TouchableWithoutFeedback } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
@@ -7,6 +8,7 @@ import Constants from 'expo-constants';
 
 const API_URL_PERFIL = Constants.expoConfig?.extra?.apiPerfilUrl!;
 const API_URL_LOGOUT = Constants.expoConfig?.extra?.apiLogoutUrl!;
+
 
 /* Icons */
 const icon = require("@/assets/images/logos/logo.png");
@@ -21,6 +23,7 @@ const Header: React.FC = () => {
   const [rol, setRol] = useState<string | null>(null);
   const [nombre, setNombre] = useState('');
   const [username, setUsername] = useState('');
+
   
   const router = useRouter();
   const closeMenu = () => setMenuVisible(false);
@@ -402,7 +405,6 @@ const styles = StyleSheet.create({
     color: '#333',
     marginTop: 4,
   },
-
   // Estilos del modal de cuenta
   accountOverlay: {
     flex: 1,
@@ -491,7 +493,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     letterSpacing: 0.5,
   },
-
 }
 );
 

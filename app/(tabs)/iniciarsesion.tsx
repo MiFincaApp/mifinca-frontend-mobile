@@ -95,7 +95,6 @@ export default function IniciarSesion() {
   return (
     <View style={styles.container}>
       <Header />
-
       <View style={styles.formContainer}>
         <Image
           source={require("@/assets/images/logos/LogoMiFinca.png")}
