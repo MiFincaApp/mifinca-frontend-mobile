@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, TextInput, StyleSheet, Pressable, TouchableOpacity, Modal, FlatList } from 'react-native';
+
+import { View, Text, Image, TextInput, StyleSheet, Pressable, TouchableOpacity, Modal, FlatList, TouchableWithoutFeedback } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useCarrito } from '@/components/context/carrito/carritocontext';
+import Constants from 'expo-constants';
+
+const API_URL_PERFIL = Constants.expoConfig?.extra?.apiPerfilUrl!;
+const API_URL_LOGOUT = Constants.expoConfig?.extra?.apiLogoutUrl!;
+
 
 /* Icons */
 const icon = require("@/assets/images/logos/logo.png");
@@ -12,37 +18,117 @@ import { FontAwesome } from '@expo/vector-icons';
 const Header: React.FC = () => {
   const [visible, setVisible] = useState(false);
   const { carrito, total } = useCarrito();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [rol, setRol] = useState<string | null>(null);
+  const [nombre, setNombre] = useState('');
+  const [username, setUsername] = useState('');
+
   
   const router = useRouter();
+  const closeMenu = () => setMenuVisible(false);
   
-  /*
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
-
   useEffect(() => {
-    const checkToken = async () => {
-      const token = await AsyncStorage.getItem("token");
-      setIsLoggedIn(!!token);
+    const fetchUserRole = async () => {
+      try {
+        const token = await AsyncStorage.getItem('accessToken');
+        if (!token) return;
+
+        setIsLoggedIn(true);
+
+        const response = await fetch(`${API_URL_PERFIL}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'USER-MIFINCA-CLIENT': 'mifincaapp-mobile-android',
+          },
+        });
+
+        if (!response.ok) throw new Error("Error al obtener el perfil");
+
+        const data = await response.json();
+        if (data.roles && data.roles.length > 0) {
+          setRol(data.roles[0].nombreRol);
+        } else {
+          setRol(null);
+        }
+
+        if (data.nombre) {
+          setNombre(data.nombre);
+        }
+
+        if (data.username) {
+          setUsername(data.username);
+        }
+      } catch (err) {
+        console.error("Error al obtener el rol:", err);
+      }
     };
 
-    checkToken();
+    fetchUserRole();
   }, []);
 
-  const handleAccountPress = () => {
-    if (isLoggedIn) {
-      setShowMenu(prev => !prev);
-    } else {
-      router.push('/login');
+  const logout = async () => {
+    try {
+      const token = await AsyncStorage.getItem('accessToken');
+      if (!token) {
+        // No hay token para enviar a la API, pero sí eliminamos cualquier token almacenado
+        await AsyncStorage.removeItem('accessToken');
+        await AsyncStorage.removeItem('refreshToken');
+        setIsLoggedIn(false);
+        setRol(null);
+        router.push('/iniciarsesion');
+        return;
+      }
+
+      // Llamada a la API para cerrar sesión
+      const response = await fetch(API_URL_LOGOUT, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'USER-MIFINCA-CLIENT': 'mifincaapp-mobile-android',
+        },
+      });
+
+      if (response.ok) {
+        // Si la respuesta es exitosa, elimina los tokens y redirige
+        await AsyncStorage.removeItem('accessToken');
+        await AsyncStorage.removeItem('refreshToken');
+        setIsLoggedIn(false);
+        setRol(null);
+        router.push('/iniciarsesion');
+      } else {
+        // Si no es exitosa, no eliminar tokens ni redirigir.
+        const errorData = await response.json();
+        console.error('Error en logout:', errorData.message || response.statusText);
+      }
+    } catch (error) {
+      // Error de red o inesperado: no eliminar tokens ni redirigir
+      console.error('Error en logout:', error);
     }
   };
 
-  const logout = async () => {
-    await AsyncStorage.removeItem("token");
-    setIsLoggedIn(false);
-    setShowMenu(false);
-    router.push('/login');
+  const handleAccountPress = () => {
+    if (isLoggedIn) {
+      setMenuVisible(true);
+    } else {
+      router.push('/iniciarsesion');
+    }
   };
-  */
+
+  const getIconSource = () => {
+    switch (rol) {
+      case 'COMPRADOR':
+        return require('@/assets/images/perfil/avatar-comprador.png');
+      case 'CAMPESINO':
+        return require('@/assets/images/perfil/avatar-vendedor.png');
+      case 'ADMIN':
+        return require('@/assets/images/perfil/avatar-admin.png');
+      default:
+        return null;
+    }
+  };
 
   return (
     <View style={styles.header}>
@@ -64,10 +150,14 @@ const Header: React.FC = () => {
         </View>
 
         <View style={styles.iconsMenu}>
-          <TouchableOpacity onPress={() => router.push('/iniciarsesion')}>
-            <FontAwesome name="user-circle" size={24} color="black" />
+          <TouchableOpacity onPress={handleAccountPress}>
+            {getIconSource() ? (
+              <Image source={getIconSource()} style={{ width: 28, height: 28, borderRadius: 14 }} />
+            ) : (
+              <FontAwesome name="user-circle" size={28} color="black" />
+            )}
           </TouchableOpacity>
-          </View>
+        </View>
       </View>
 
       {/* 🔽 Sidebar Modal */}
@@ -108,36 +198,57 @@ const Header: React.FC = () => {
         </View>
       </Modal>
 
-      {/* va en la linea 72 onPress={handleAccountPress} */}
+      {/* Menú desplegable de cuenta */}
+      <Modal
+        visible={menuVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={closeMenu}
+      >
+        <TouchableWithoutFeedback onPress={closeMenu}>
+          <View style={styles.accountOverlay}>
+            <TouchableWithoutFeedback>
+              <View style={styles.accountSidebar}>
+                {/* Encabezado con avatar e info */}
+                <View style={styles.accountHeader}>
+                  <Image
+                    source={getIconSource()}
+                    style={styles.accountAvatar}
+                    resizeMode="contain"
+                  />
+                  <View style={styles.accountUserInfo}>
+                    <Text style={styles.accountNombre}>{nombre}</Text>
+                    <Text style={styles.accountUsername}>@{username}</Text>
+                    <Text style={styles.accountRol}>{rol}</Text>
+                  </View>
+                </View>
 
-      
-      {/* {showMenu && (
-        <View style={styles.dropdownMenu}>
-          <Pressable onPress={() => {
-            setShowMenu(false);
-            router.push('/perfil');
-          }}>
-            <Text style={styles.menuItem}>Perfil</Text>
-          </Pressable>
-          <Pressable onPress={() => {
-            setShowMenu(false);
-            router.push('/misordenes');
-          }}>
-            <Text style={styles.menuItem}>Mis órdenes</Text>
-          </Pressable>
-          <Pressable onPress={() => {
-            setShowMenu(false);
-            router.push('/nosotros');
-          }}>
-            <Text style={styles.menuItem}>Nosotros</Text>
-          </Pressable>
+                {/* Botones */}
+                <TouchableOpacity
+                  style={styles.buttonCuenta}
+                  onPress={() => {
+                    closeMenu();
+                    router.push('/Perfil');
+                  }}
+                >
+                  <Text style={styles.textoBotonCuenta}>Perfil</Text>
+                </TouchableOpacity>
 
-          <Pressable onPress={logout}>
-            <Text style={styles.menuItem}>Cerrar sesión</Text>
-          </Pressable>
-        </View>
-      )} */}
+                <TouchableOpacity
+                  style={styles.buttonCuenta}
+                  onPress={() => {
+                    closeMenu();
+                    logout();
+                  }}
+                >
+                  <Text style={styles.textoBotonCuenta}>Cerrar sesión</Text>
+                </TouchableOpacity>
 
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </View>
   );
 };
@@ -293,6 +404,94 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#333',
     marginTop: 4,
+  },
+  // Estilos del modal de cuenta
+  accountOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+    flexDirection: 'row',
+  },
+
+  accountSidebar: {
+    width: '60%',
+    backgroundColor: '#fff',
+    padding: 20,
+    right: 0,
+    top: 0,
+    height: '100%',
+    shadowColor: '#000',
+    shadowOffset: { width: -2, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 10,
+  },
+
+  accountTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+
+  // Estilos del encabezado del modal de cuenta
+  accountHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 25,
+    backgroundColor: 'rgb(6, 87, 6)',
+    padding: 10,
+    borderRadius: 10,
+  },
+
+  accountAvatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginRight: 15,
+  },
+
+  accountUserInfo: {
+    flex: 1,
+  },
+
+  accountNombre: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+
+  accountUsername: {
+    fontSize: 14,
+    color: '#fff',
+  },
+
+  accountRol: {
+    fontSize: 12,
+    fontStyle: 'italic',
+    color: '#fff',
+    marginTop: 2,
+  },
+
+  // Estilos del boton del modal de perfil
+  buttonCuenta: {
+    backgroundColor: "#4CAF50",
+    paddingVertical: 14,
+    paddingHorizontal: 25,
+    borderRadius: 12,
+    width: 200,
+    marginVertical: 10,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  textoBotonCuenta: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+    letterSpacing: 0.5,
   },
 }
 );

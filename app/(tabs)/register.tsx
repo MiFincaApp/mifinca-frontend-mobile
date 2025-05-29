@@ -1,106 +1,143 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, ScrollView, Alert } from "react-native";
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import Header from "@/components/header/header";
+import Constants from "expo-constants";
 
-export default function RegisterScreen() {
-  const [userType, setUserType] = useState("");
-  const [docType, setDocType] = useState("");
-  const [docNumber, setDocNumber] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [phone, setPhone] = useState("");
+const API_URL = Constants.expoConfig?.extra?.apiRegisterUrl!;
+
+export default function register() {
+  const router = useRouter();
+  const { tipoUsuario: tipoUsuarioParam } = useLocalSearchParams<{ tipoUsuario: "CAMPESINO" | "COMPRADOR" }>();
+
+  const [nombre, setNombre] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleRegister = () => {
-    console.log("Datos del usuario:", {
-      userType,
-      docType,
-      docNumber,
-      fullName,
-      phone,
-      email,
+  const tipoUsuario = (tipoUsuarioParam || "") as "CAMPESINO" | "COMPRADOR" | "";
+  
+
+  const handleRegister = async () => {
+    if (!nombre || !username || !email || !password) {
+      Alert.alert("Error", "Por favor completa todos los campos.");
+      return;
+    }
+
+    const payload: any = {
+      nombre,
+      username,
       password,
-    });
+      email,
+      tipoUsuario,
+    };
+
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "USER-MIFINCA-CLIENT": "mifincaapp-mobile-android",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const contentType = response.headers.get("Content-Type");
+
+      // Leer la respuesta como texto crudo
+      const rawText = await response.text();
+      let jsonData: any = null;
+
+      // Intentar parsear si el Content-Type indica que es JSON
+      if (contentType && contentType.includes("application/json")) {
+        try {
+          jsonData = JSON.parse(rawText);
+        } catch (jsonError) {
+          console.error("Error parseando JSON:", jsonError);
+          Alert.alert("Error", "La respuesta del servidor no es un JSON válido.");
+          return;
+        }
+      }
+
+      if (response.ok) {
+        console.log("Usuario registrado:", jsonData || rawText);
+
+        Alert.alert("Éxito", "Usuario registrado correctamente");
+        router.replace("/iniciarsesion");
+
+        setNombre("");
+        setUsername("");
+        setEmail("");
+        setPassword("");
+      } else {
+        const message =
+          (jsonData && jsonData.message) ||
+          rawText ||
+          "No se pudo registrar";
+        console.error("Error al registrar:", message);
+        Alert.alert("Error", message);
+      }
+    } catch (error) {
+      console.error("Error de red:", error);
+      Alert.alert("Error de red", "Intente nuevamente más tarde.");
+    }
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <Header />
+
       <Image
         source={require("@/assets/images/logos/LogoMiFinca.png")}
         style={styles.logo}
       />
 
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>Quien eres:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ej: Campesino, Comprador"
-          value={userType}
-          onChangeText={setUserType}
-        />
-      </View>
+      <Text style={styles.title}>
+        {tipoUsuario === "CAMPESINO" ? "Registro de CAMPESINO" : "Registro de Comprador"}
+      </Text>
 
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>Tipo de documento:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ej: Cédula, Pasaporte"
-          value={docType}
-          onChangeText={setDocType}
-        />
-      </View>
+      <View style={styles.formWrapper}>
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Nombre completo:</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Ingrese su nombre"
+            value={nombre}
+            onChangeText={setNombre}
+          />
+        </View>
 
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>N° del documentación:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ingrese documento"
-          value={docNumber}
-          onChangeText={setDocNumber}
-          keyboardType="numeric"
-        />
-      </View>
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Nombre de usuario:</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Ingrese un nombre de usuario"
+            value={username}
+            onChangeText={setUsername}
+          />
+        </View>
 
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>Nombre completo:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ingrese su nombre"
-          value={fullName}
-          onChangeText={setFullName}
-        />
-      </View>
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Correo electrónico:</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Ingrese un correo"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+          />
+        </View>
 
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>Teléfono:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ingrese su número"
-          value={phone}
-          onChangeText={setPhone}
-          keyboardType="phone-pad"
-        />
-      </View>
-
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>Correo electrónico:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ingrese un correo"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
-      </View>
-
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>Contraseña:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ingrese una contraseña"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Contraseña:</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Ingrese una contraseña"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+        </View>
       </View>
 
       <TouchableOpacity style={styles.button} onPress={handleRegister}>
@@ -112,44 +149,80 @@ export default function RegisterScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    flexGrow: 1,
+    padding: 10,
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#ffffff",
   },
+
   logo: {
-    width: 150,
-    height: 150,
-    marginBottom: 20,
+    width: 160,
+    height: 160,
+    marginTop: 30,
+    marginBottom: 10,
     resizeMode: "contain",
   },
-  inputGroup: {
+
+  title: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: "#222",
+    marginBottom: 25,
+    textAlign: "center",
+    letterSpacing: 0.5,
+  },
+
+  formWrapper: {
     width: "100%",
-    marginBottom: 15,
+    maxWidth: 400,
   },
+
+  inputGroup: {
+    marginBottom: 18,
+  },
+
   label: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: "#000",
+    fontSize: 15,
+    color: "#333",
+    marginBottom: 6,
+    fontWeight: "500",
   },
+
   input: {
-    borderWidth: 1,
+    height: 48,
+    backgroundColor: "#f9f9f9",
     borderColor: "#ccc",
-    borderRadius: 6,
-    paddingHorizontal: 10,
-    height: 40,
-    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    fontSize: 15,
+    color: "#000",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
   },
+
+  // Estilos del boton de registro
   button: {
-    backgroundColor: "#c4001d",
+    backgroundColor: "#4CAF50",
     paddingVertical: 12,
     paddingHorizontal: 30,
-    borderRadius: 8,
+    borderRadius: 10,
+    width: 200,
+    alignItems: "center",
     marginTop: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+    elevation: 3,
   },
   buttonText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: "600",
+    letterSpacing: 0.5,
   },
 });
