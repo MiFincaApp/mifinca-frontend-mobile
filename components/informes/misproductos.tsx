@@ -161,9 +161,6 @@ export default function MisProductos() {
                 <Text style={styles.cantidad}>Cantidad: {item.cantidad}</Text>
               </View>
               <View style={styles.iconos}>
-                <TouchableOpacity onPress={() => abrirModalEdicion(item)}>
-                  <Feather name="edit-2" size={20} color="#4CAF50" />
-                </TouchableOpacity>
                 <TouchableOpacity onPress={() => eliminarProducto(item.idProducto)}>
                   <AntDesign name="delete" size={20} color="red" style={{ marginLeft: 12 }} />
                 </TouchableOpacity>

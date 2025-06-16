@@ -20,6 +20,7 @@ const API_URL_COMPRADOR = Constants.expoConfig?.extra?.apiUrlInformeComprador!;
 
 export default function InformesComprador() {
   const [datos, setDatos] = useState<InformeCompra[]>([]);
+  const [datosCargados, setDatosCargados] = useState(false);
 
   useEffect(() => {
     const obtenerDatos = async () => {
@@ -41,25 +42,32 @@ export default function InformesComprador() {
 
         if (response.ok) {
           const data = await response.json();
-          setDatos(data);
+          if (Array.isArray(data)) {
+            setDatos(data);
+          } else {
+            setDatos([]);
+          }
         } else {
           console.error("Error al obtener informe:", await response.text());
         }
       } catch (error) {
         console.error("Error de red:", error);
+      } finally {
+        setDatosCargados(true);
       }
     };
 
     obtenerDatos();
   }, []);
 
-  const labels = datos.map(d => d.nombreProducto);
-  const cantidades = datos.map(d => d.cantidad);
+  const labels = datos.map((d) => d.nombreProducto);
+  const cantidades = datos.map((d) => d.cantidad);
 
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Informes de Compras</Text>
 
+      {/* Mostrar gráfico solo si hay datos */}
       {datos.length > 0 && (
         <BarChart
           data={{
@@ -97,10 +105,25 @@ export default function InformesComprador() {
           <Text style={[styles.headerCell, { flex: 1 }]}>Total</Text>
         </View>
 
-        {/* Filas */}
+        {/* Filas de datos o mensaje de sin productos */}
         <FlatList
-          data={datos}
-          keyExtractor={(item) => item.id.toString()}
+          data={
+            datos.length === 0 && datosCargados
+              ? [
+                  {
+                    id: 0,
+                    productoId: 0,
+                    nombreProducto: "Sin productos",
+                    cantidad: 0,
+                    precioTotal: 0,
+                    compradorId: 0,
+                    vendedorId: 0,
+                    fechaCompra: "",
+                  },
+                ]
+              : datos
+          }
+          keyExtractor={(item) => item.nombreProducto + item.id}
           renderItem={({ item }) => (
             <View style={styles.dataRow}>
               <Text style={[styles.dataCell, { flex: 2 }]}>{item.nombreProducto}</Text>
