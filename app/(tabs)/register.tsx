@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, ScrollView, Alert } from "react-native";
+import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, ScrollView, Alert, Modal, Platform } from "react-native";
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import Header from "@/components/header/header";
 import Constants from "expo-constants";
+import SuccessAnimation from "@/components/screens/SuccessAnimation";
 
 const API_URL = Constants.expoConfig?.extra?.apiRegisterUrl!;
 
@@ -14,6 +15,9 @@ export default function register() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [showSuccessModal, setShowSuccessModal] = useState(false);  // Estado modal
+
 
   const tipoUsuario = (tipoUsuarioParam || "") as "CAMPESINO" | "COMPRADOR" | "";
   
@@ -62,13 +66,21 @@ export default function register() {
       if (response.ok) {
         console.log("Usuario registrado:", jsonData || rawText);
 
-        Alert.alert("Éxito", "Usuario registrado correctamente");
-        router.replace("/iniciarsesion");
+        // Mostrar modal éxito
+        setShowSuccessModal(true);
 
+        // Limpiar campos
         setNombre("");
         setUsername("");
         setEmail("");
         setPassword("");
+
+        // Cerrar modal y redirigir tras 3 segundos
+        setTimeout(() => {
+          setShowSuccessModal(false);
+          router.replace("/iniciarsesion");
+        }, 3000);
+
       } else {
         const message =
           (jsonData && jsonData.message) ||
@@ -83,69 +95,85 @@ export default function register() {
     }
   };
 
-  return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Header />
+    return (
+      <>
+        <ScrollView contentContainerStyle={styles.container}>
+          <Header />
 
-      <Image
-        source={require("@/assets/images/logos/LogoMiFinca.png")}
-        style={styles.logo}
-      />
-
-      <Text style={styles.title}>
-        {tipoUsuario === "CAMPESINO" ? "Registro de CAMPESINO" : "Registro de Comprador"}
-      </Text>
-
-      <View style={styles.formWrapper}>
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Nombre completo:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ingrese su nombre"
-            value={nombre}
-            onChangeText={setNombre}
+          <Image
+            source={require("@/assets/images/logos/LogoMiFinca.png")}
+            style={styles.logo}
           />
-        </View>
 
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Nombre de usuario:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ingrese un nombre de usuario"
-            value={username}
-            onChangeText={setUsername}
-          />
-        </View>
+          <Text style={styles.title}>
+            {tipoUsuario === "CAMPESINO" ? "Registro de CAMPESINO" : "Registro de Comprador"}
+          </Text>
 
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Correo electrónico:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ingrese un correo"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-          />
-        </View>
+          <View style={styles.formWrapper}>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Nombre completo:</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Ingrese su nombre"
+                value={nombre}
+                onChangeText={setNombre}
+              />
+            </View>
 
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Contraseña:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ingrese una contraseña"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
-        </View>
-      </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Nombre de usuario:</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Ingrese un nombre de usuario"
+                value={username}
+                onChangeText={setUsername}
+              />
+            </View>
 
-      <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Registrarse</Text>
-      </TouchableOpacity>
-    </ScrollView>
-  );
-}
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Correo electrónico:</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Ingrese un correo"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+              />
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Contraseña:</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Ingrese una contraseña"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+              />
+            </View>
+          </View>
+
+          <TouchableOpacity style={styles.button} onPress={handleRegister}>
+            <Text style={styles.buttonText}>Registrarse</Text>
+          </TouchableOpacity>
+        </ScrollView>
+
+        {/* Modal de éxito */}
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={showSuccessModal}
+          onRequestClose={() => setShowSuccessModal(false)}
+        >
+          <View style={modalStyles.centeredView}>
+            <View style={modalStyles.modalView}>
+                <SuccessAnimation />
+            </View>
+          </View>
+        </Modal>
+      </>
+    );
+  }
 
 const styles = StyleSheet.create({
   container: {
@@ -224,5 +252,31 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     letterSpacing: 0.5,
+  },
+});
+
+const modalStyles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo negro semitransparente
+  },
+  modalView: {
+    width: '80%', // o usa '80%' si quieres que se adapte a diferentes pantallas
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  successText: {
+    marginTop: 15,
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });

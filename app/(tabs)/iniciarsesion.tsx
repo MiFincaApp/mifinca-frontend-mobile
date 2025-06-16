@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, TextInput, Button, View, Image, Text, ActivityIndicator, Alert, Platform, Modal, Pressable, TouchableOpacity } from "react-native";
+import { StyleSheet, TextInput, View, Image, Text, ActivityIndicator, Alert, Platform, Modal, ScrollView, TouchableOpacity } from "react-native";
 import { useRouter } from 'expo-router';
 import Constants from 'expo-constants';
 import Header from '@/components/header/header';
@@ -93,7 +93,7 @@ export default function IniciarSesion() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Header />
       <View style={styles.formContainer}>
         <Image
@@ -166,7 +166,7 @@ export default function IniciarSesion() {
           </View>
         </Modal>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 

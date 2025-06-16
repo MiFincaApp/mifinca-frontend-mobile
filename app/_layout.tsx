@@ -9,11 +9,12 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
 
+import useTokenRefresher from "@/hooks/useTokenRefresher";
+
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { CarritoProvider } from "@/components/context/carrito/carritocontext";
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-//.....
+
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -21,6 +22,9 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
+
+  useTokenRefresher();
+  // Hook para refrescar el token cada 5 minutos
 
   useEffect(() => {
     if (loaded) {
@@ -37,11 +41,6 @@ export default function RootLayout() {
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="register" options={{ title: "Registrar" }} />
-          <Stack.Screen
-            name="frecuentQuestion"
-            options={{ title: "Preguntas frecuentes" }}
-          />
           <Stack.Screen name="+not-found" />
         </Stack>
       </ThemeProvider>

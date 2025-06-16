@@ -1,93 +1,110 @@
 import React from "react";
-import {StyleSheet, ScrollView, View, Text, Image, TouchableOpacity, Pressable} from "react-native";
+import { StyleSheet, ScrollView, View, Text, Image, TouchableOpacity } from "react-native";
 import Header from '@/components/header/header';
 import { useRouter } from 'expo-router';
 
 const icon = require('@/assets/images/logos/LogoMiFinca.png');
 const iconw = require('@/assets/images/Redes Sociales/whatsapp.png');
 
-const soporte = () => {
-    const router = useRouter(); // usamos el router de expo
+const Soporte = () => {
+    const router = useRouter();
 
-  return(
-    <ScrollView contentContainerStyle={styles.container}>
-        {/* Header */}
-        <Header />
+    return (
+        <View style={styles.container}>
+            {/* Header fijo arriba */}
+            <Header />
 
-            {/* Banner - Logo */}
-            <Image source={icon} style={styles.methodBanner}></Image>
+            {/* Contenido centrado */}
+            <ScrollView contentContainerStyle={styles.content}>
+                <Image source={icon} style={styles.methodBanner} />
 
-            {/* Buttons */}
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.methodButton}>
-                    <Text style={styles.methodText}>Chat de arreglo tickets</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.methodButton} onPress={() => router.push('/administracion')}>
-                    <Text style={styles.methodText}>Chat de usuarios</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.methodButton} onPress={() => router.push('/PreguntasFrecuentes')}>
-                    <Text style={styles.methodText}>Preguntas frecuentes</Text>
-                </TouchableOpacity>
-                {/*  Whatsapp*/}
-                <TouchableOpacity style={styles.whatsappButton}>
-                    <Image source={iconw} style={styles.whatsappIcon} />
-                    <Text style={styles.whatsappText}>Contáctanos Vía WhatsApp</Text>
-                </TouchableOpacity>
-            </View>
-            
-    </ScrollView>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        style={styles.methodButton}
+                        onPress={() => router.push('/PreguntasFrecuentes')}
+                    >
+                        <Text style={styles.methodText}>Preguntas frecuentes</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.whatsappButton}>
+                        <Image source={iconw} style={styles.whatsappIcon} />
+                        <Text style={styles.whatsappText}>Contáctanos vía WhatsApp</Text>
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
+        </View>
     );
 };
 
-const styles= StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
-        flexGrow: 1,
+        flex: 1,
         backgroundColor: "#fff",
         padding: 10,
     },
+    content: {
+        flexGrow: 1,
+        justifyContent: "flex-start", // Ya no centramos verticalmente
+        alignItems: "center",
+        paddingTop: 160, // Eleva el contenido visualmente
+        paddingHorizontal: 24,
+        paddingBottom: 40,
+    },
     methodBanner: {
-        width: "100%",
-        height: 175,
+        width: 220,
+        height: 160,
         resizeMode: "contain",
-        marginVertical: 20,
+        marginBottom: 32,
     },
     buttonContainer: {
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
+        width: "100%",
+        alignItems: "center",
+        gap: 20,
     },
     methodButton: {
-        backgroundColor: "#C3002F",
-        paddingVertical: 12,
-        borderRadius: 8,
-        marginVertical: 8,
+        backgroundColor: "#4CAF50",
+        paddingVertical: 14,
+        paddingHorizontal: 32,
+        borderRadius: 12,
         alignItems: "center",
+        width: "100%",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 4,
     },
     methodText: {
         color: "#fff",
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: "bold",
     },
     whatsappButton: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#fff",
-        paddingVertical: 10,
-        borderRadius: 8,
-        marginTop: 20,
+        backgroundColor: "#f1f1f1",
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        borderRadius: 12,
         width: "100%",
         justifyContent: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 3,
     },
     whatsappIcon: {
-        width: 60,
-        height: 60,
-        marginRight: 10,
+        width: 40,
+        height: 40,
+        marginRight: 12,
     },
     whatsappText: {
         color: "#333",
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: "bold",
     },
 });
 
-export default soporte;
+
+export default Soporte;

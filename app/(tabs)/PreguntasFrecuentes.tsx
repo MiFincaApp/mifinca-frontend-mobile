@@ -5,61 +5,58 @@ import Header from '@/components/header/header';
 const faqs = [
   {
     id: 1,
-    pregunta: "¿Que es un sistema de comtenido?",
-    respuesta: "Contenido de la respuesta...."
+    pregunta: "¿Qué es un sistema de contenido?",
+    respuesta: "Es una plataforma que permite gestionar, organizar y publicar contenido digital fácilmente. Mifincaapp usa un sistema que permite a los campesinos publicar productos y administrar su tienda."
   },
   {
     id: 2,
-    pregunta: "¿Cuál es el producto agotado?",
-    respuesta: "Contenido de la respuesta...."
+    pregunta: "¿Qué significa producto agotado?",
+    respuesta: "Significa que un producto no está disponible en el inventario del campesino. Puedes esperar a que el vendedor lo reponga o buscar alternativas similares en la tienda."
   },
   {
     id: 3,
-    pregunta: "¿Cual es el problema con la transacción?",
-    respuesta: "Contenido de la respuesta...."
+    pregunta: "¿Qué hacer si hay un problema con la transacción?",
+    respuesta: "Contáctanos de inmediato vía WhatsApp. Guarda el número de transacción y la hora. Nuestro equipo te ayudará a resolver el inconveniente."
   },
   {
     id: 4,
-    pregunta: "¿Aun problema con el funcionamiento de la pagina?",
-    respuesta: "Contenido de la respuesta...."
+    pregunta: "¿Qué hago si hay un problema con el funcionamiento de la página?",
+    respuesta: "Puedes enviarnos una captura del error o describir el problema vía WhatsApp o correo. Nuestro equipo técnico revisará lo antes posible."
   },
   {
     id: 5,
-    pregunta: "Debo alojar el sitio web de mi empresa en CMS hub?",
-    respuesta: "Contenido de la respuesta...."
+    pregunta: "¿Debo alojar el sitio web de mi empresa en CMS Hub?",
+    respuesta: "No es obligatorio. Mifincaapp ya gestiona la publicación y visibilidad de tu tienda. Sin embargo, si deseas un sitio web personalizado externo, puedes usar CMS Hub."
   },
   {
     id: 6,
-    pregunta: "Ajuste en el sistema",
-    respuesta: "Contenido de la respuesta...."
+    pregunta: "¿Qué tipo de ajustes puedo solicitar en el sistema?",
+    respuesta: "Puedes solicitar ajustes en tus productos, imágenes, descripciones o precios. También puedes reportar errores o solicitar nuevas funcionalidades."
   },
   {
     id: 7,
-    pregunta: "¿Con que recursos puedo comenzar?",
-    respuesta: "Contenido de la respuesta...."
+    pregunta: "¿Con qué recursos puedo comenzar en Mifincaapp?",
+    respuesta: "Puedes comenzar registrándote como campesino, subiendo tu primer producto con una imagen y descripción. También puedes revisar guías o preguntar a soporte para más ayuda."
   }
 ];
 
 const PreguntasFrecuentes = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <Header />
 
-      {/* Header */}
-      <View>
-        <Header />
-      </View>
-
-      {/* FAQ Section */}
       <View style={styles.faqContainer}>
-        <Text style={styles.faqTitle}>PREGUNTAS FRECUENTES</Text>
+        <Text style={styles.faqTitle}>Preguntas Frecuentes</Text>
         <View style={styles.faqGrid}>
           {faqs.map((faq) => (
-            <TouchableOpacity key={faq.id} style={styles.faqItem}>
+            <View key={faq.id} style={styles.faqItem}>
               <Text style={styles.faqQuestion}>
                 {faq.pregunta}
-                <Text style={styles.arrow}>›</Text>
               </Text>
-            </TouchableOpacity>
+              <Text style={styles.faqAnswer}>
+                {faq.respuesta}
+              </Text>
+            </View>
           ))}
         </View>
       </View>
@@ -73,45 +70,47 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 10,
   },
-
   faqContainer: {
     flexGrow: 1,
-    maxWidth: 1200,
-    margin: 20,
-    padding: 10,
+    paddingHorizontal: 16,
+    paddingBottom: 30,
   },
   faqTitle: {
     textAlign: "center",
-    marginBottom: 20,
+    marginVertical: 20,
     fontSize: 24,
+    fontWeight: "bold",
+    color: "#4CAF50",
   },
   faqGrid: {
-    display: "flex",
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
   },
   faqItem: {
-    borderWidth: 1,
-    borderColor: "#ff4081",
-    borderRadius: 4,
-    padding: 10,
-    marginBottom: 10,
     width: "48%",
-    cursor: "pointer",
-  },
-  faqItemHover: {
-    backgroundColor: "#fff5f8",
+    backgroundColor: "#f9f9f9",
+    borderWidth: 1,
+    borderColor: "#4CAF50",
+    borderRadius: 10,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   faqQuestion: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    margin: 0,
-    fontSize: 18,
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 8,
   },
-  arrow: {
-    fontSize: 18,
+  faqAnswer: {
+    fontSize: 14,
+    color: "#555",
+    lineHeight: 20,
   },
 });
 

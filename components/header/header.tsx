@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-
-import { View, Text, Image, TextInput, StyleSheet, Pressable, TouchableOpacity, Modal, FlatList, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, Image, TextInput, StyleSheet, Pressable, TouchableOpacity, Modal, FlatList, TouchableWithoutFeedback, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useCarrito } from '@/components/context/carrito/carritocontext';
@@ -9,21 +8,19 @@ import Constants from 'expo-constants';
 const API_URL_PERFIL = Constants.expoConfig?.extra?.apiPerfilUrl!;
 const API_URL_LOGOUT = Constants.expoConfig?.extra?.apiLogoutUrl!;
 
-
-/* Icons */
 const icon = require("@/assets/images/logos/logo.png");
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, Feather } from '@expo/vector-icons';
 
 
 const Header: React.FC = () => {
   const [visible, setVisible] = useState(false);
-  const { carrito, total } = useCarrito();
+  const { carrito, total, eliminarProducto } = useCarrito();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
   const [rol, setRol] = useState<string | null>(null);
   const [nombre, setNombre] = useState('');
   const [username, setUsername] = useState('');
-
+  const [searchText, setSearchText] = React.useState('');
   
   const router = useRouter();
   const closeMenu = () => setMenuVisible(false);
@@ -130,6 +127,15 @@ const Header: React.FC = () => {
     }
   };
 
+  const onSubmit = () => {
+    const termino = searchText.trim();
+    if (termino.length > 0) {
+      router.push(`/buscar?termino=${encodeURIComponent(termino)}`);
+    }
+  };
+
+  const deshabilitarCompra = !isLoggedIn || carrito.length === 0 || total === 0;
+
   return (
     <View style={styles.header}>
       <Pressable onPress={() => router.push('/')}>
@@ -140,6 +146,9 @@ const Header: React.FC = () => {
         style={styles.searchBar}
         placeholder="Buscar..."
         placeholderTextColor="#888"
+        value={searchText}
+        onChangeText={setSearchText}
+        onSubmitEditing={onSubmit}
       />
 
       <View style={styles.headerRight}>
@@ -179,20 +188,36 @@ const Header: React.FC = () => {
                   <Image source={{ uri: item.imagen_url }} style={styles.cardImage} />
                   <View style={styles.cardContent}>
                     <Text style={styles.cardTitle}>{item.nombre}</Text>
-                    <Text style={styles.cardPrice}>${item.precio}</Text>
+                    <Text style={styles.cardPrice}>${item.precio} x {item.cantidad} u</Text>
+                    <Text style={styles.cardSubtotal}>Subtotal: ${(item.precio * item.cantidad).toFixed(2)}</Text>
                   </View>
+                  <TouchableOpacity onPress={() => eliminarProducto(item.id)}>
+                    <Feather name="trash-2" size={20} color="red" />
+                  </TouchableOpacity>
                 </View>
               )}
             />
 
             <Text style={styles.totalText}>Total: ${total.toFixed(2)}</Text>
 
-            <TouchableOpacity style={styles.checkoutButton} onPress={() => {/* lógica para pagar */}}>
+            <TouchableOpacity
+              style={[
+                styles.checkoutButton,
+                (!isLoggedIn || carrito.length === 0 || total === 0) && { opacity: 0.5 },
+              ]}
+              disabled={!isLoggedIn || carrito.length === 0 || total === 0}
+              onPress={() => {
+                if (!isLoggedIn) {
+                  Alert.alert("Inicia sesión", "Debes iniciar sesión para proceder con la compra.");
+                  return;
+                }
+              }}
+            >
               <Text style={styles.checkoutText}>Proceder a la compra</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => setVisible(false)}>
-              <Text style={styles.closeText}>Cerrar</Text>
+            <TouchableOpacity style={styles.modalButtonCancel} onPress={() => setVisible(false)}>
+              <Text style={styles.modalButtonCancelText}>Cerrar</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -287,7 +312,6 @@ const styles = StyleSheet.create({
   iconsMenu: {
     marginHorizontal: 10,
   },
-
   icon: {
     width: 25,
     height: 25,
@@ -309,11 +333,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     fontSize: 16,
   },
+
+  // Estilos del modal del carrito
   sidebar: {
     position: 'absolute',
     right: 0,
     top: 0,
-    width: '60%',
+    width: '65%',
     height: '100%',
     backgroundColor: '#fff',
     padding: 20,
@@ -330,49 +356,13 @@ const styles = StyleSheet.create({
   sidebarTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  cartItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  cartImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 8,
-  },
-  totalText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginVertical: 10,
-  },
-  checkoutButton: {
-    backgroundColor: '#28a745',
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  checkoutText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  closeText: {
-    marginTop: 10,
+    marginBottom: 16,
     textAlign: 'center',
-    textAlignVertical: 'center',
-    color: '#fff',
-    fontWeight: 'bold',
-    height: 40,
-    backgroundColor: 'red',
-    width: '100%',
-    borderRadius: 8,
   },
   card: {
-    width: '90%',
     flexDirection: 'row',
-    backgroundColor: '#f9f9f9',
-    borderRadius: 10,
+    backgroundColor: '#fff',
+    borderRadius: 12,
     padding: 10,
     marginBottom: 12,
     shadowColor: '#000',
@@ -381,30 +371,80 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
     alignItems: 'center',
-    alignSelf: 'center',
   },
-  
   cardImage: {
     width: 50,
     height: 50,
     borderRadius: 8,
     marginRight: 10,
   },
-  
   cardContent: {
     flex: 1,
   },
-  
   cardTitle: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#333',
   },
-  
   cardPrice: {
     fontSize: 14,
-    color: '#333',
+    color: '#444',
     marginTop: 4,
   },
+  cardSubtotal: {
+    fontSize: 13,
+    color: '#666',
+    marginTop: 2,
+  },
+  totalText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginVertical: 16,
+    textAlign: 'center',
+  },
+  checkoutButton: {
+    backgroundColor: "#4CAF50",
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    width: 220,
+    alignItems: "center",
+    alignSelf: "center",
+    marginTop: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  checkoutText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  modalButtonCancel: {
+    backgroundColor: "#ddd",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    width: 220,
+    marginTop: 10,
+    marginBottom: 10,
+    alignItems: "center",
+    alignSelf: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  modalButtonCancelText: {
+    color: "#333",
+    fontSize: 16,
+    fontWeight: "500",
+    letterSpacing: 0.4,
+  },
+
   // Estilos del modal de cuenta
   accountOverlay: {
     flex: 1,
@@ -412,7 +452,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     flexDirection: 'row',
   },
-
   accountSidebar: {
     width: '60%',
     backgroundColor: '#fff',
@@ -426,7 +465,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 10,
   },
-
   accountTitle: {
     fontSize: 20,
     fontWeight: 'bold',
