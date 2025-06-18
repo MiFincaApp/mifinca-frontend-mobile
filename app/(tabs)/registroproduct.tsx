@@ -1,15 +1,18 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, ScrollView, StyleSheet, TouchableOpacity, Image, Alert, ActivityIndicator } from "react-native";
+import { View, Text, TextInput, ScrollView, StyleSheet, TouchableOpacity, Image, Alert, ActivityIndicator, Modal } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as ImageManipulator from "expo-image-manipulator";
 import Constants from "expo-constants";
 import Header from '@/components/header/header';
 import { useLocalSearchParams, useRouter } from "expo-router";
 
+import SuccessAnimation from "@/components/screens/SuccessAnimation";
+
 const API_URL_CREAR_PRODUCTO = Constants.expoConfig?.extra?.apiUrlProductCreate!;
 
 const RegistroProducto = () => {
   const router = useRouter();
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const { idFinca } = useLocalSearchParams();
   const fincaId = Number(idFinca);
 
@@ -93,13 +96,18 @@ const RegistroProducto = () => {
       });
 
       if (response.ok) {
-        Alert.alert("Éxito", "Producto registrado correctamente");
-        router.push("/informes");
+        setShowSuccessModal(true);
+
         setNombre("");
         setPrecio("");
         setDescripcion("");
         setCantidad("");
         setImagen(null);
+
+        setTimeout(() => {
+          setShowSuccessModal(false);
+          router.push({ pathname: "/informes", params: { rol: "CAMPESINO" } });
+        }, 3000); // 3 segundos
       } else {
         const errorText = await response.text();
         Alert.alert("Error", errorText || "Hubo un problema al registrar el producto");
@@ -172,6 +180,18 @@ const RegistroProducto = () => {
           </TouchableOpacity>
         </View>
       </View>
+      <Modal
+        animationType="fade"
+        transparent
+        visible={showSuccessModal}
+        onRequestClose={() => setShowSuccessModal(false)}
+      >
+        <View style={modalStyles.centeredView}>
+          <View style={modalStyles.modalView}>
+            <SuccessAnimation />
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -290,5 +310,32 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
   },
 });
+
+const modalStyles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalView: {
+    width: '80%',
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  successText: {
+    marginTop: 15,
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+});
+
 
 export default RegistroProducto;

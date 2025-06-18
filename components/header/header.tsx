@@ -206,11 +206,30 @@ const Header: React.FC = () => {
                 (!isLoggedIn || carrito.length === 0 || total === 0) && { opacity: 0.5 },
               ]}
               disabled={!isLoggedIn || carrito.length === 0 || total === 0}
-              onPress={() => {
+              onPress={async () => {
                 if (!isLoggedIn) {
                   Alert.alert("Inicia sesión", "Debes iniciar sesión para proceder con la compra.");
                   return;
                 }
+
+                // 🔸 Guarda productos correctamente en AsyncStorage
+                await AsyncStorage.setItem("productos_para_pago", JSON.stringify(
+                  carrito.map(p => ({
+                    productoId: p.id,
+                    nombre: p.nombre,
+                    cantidad: p.cantidad,
+                    precioUnitario: p.precio
+                  }))
+                ));
+
+                setVisible(false);
+
+                router.push({
+                  pathname: "/metododepago",
+                  params: {
+                    total: total.toFixed(2)
+                  }
+                });
               }}
             >
               <Text style={styles.checkoutText}>Proceder a la compra</Text>

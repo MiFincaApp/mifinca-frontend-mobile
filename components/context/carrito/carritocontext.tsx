@@ -14,6 +14,7 @@ type CarritoContextType = {
   carrito: Producto[];
   agregarProducto: (producto: Producto) => void;
   eliminarProducto: (id: string) => void;
+  limpiarCarrito: () => void;
   total: number;
 };
 
@@ -65,7 +66,15 @@ export const CarritoProvider = ({ children }: { children: ReactNode }) => {
   }, [carrito]);
 
   return (
-    <CarritoContext.Provider value={{ carrito, agregarProducto, eliminarProducto, total }}>
+    <CarritoContext.Provider
+      value={{
+        carrito,
+        agregarProducto,
+        eliminarProducto,
+        total,
+        limpiarCarrito, // <-- agrega esta función aquí
+      }}
+    >
       {children}
     </CarritoContext.Provider>
   );

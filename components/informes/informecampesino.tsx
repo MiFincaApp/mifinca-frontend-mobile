@@ -1,8 +1,9 @@
-import { View, Text, FlatList, Dimensions, StyleSheet } from "react-native";
-import { BarChart } from "react-native-chart-kit";
+import { View, Text, FlatList, Dimensions, StyleSheet, Modal } from "react-native";
+import { PieChart } from "react-native-chart-kit";
 import { useEffect, useState } from "react";
 import Constants from "expo-constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import ErrorAnimation from "@/components/screens/Error"; // animación de error
 
 // 🔸 Interfaz para los datos del informe
 interface InformeVenta {
@@ -21,13 +22,21 @@ const API_URL_CAMPESINO = Constants.expoConfig?.extra?.apiUrlInformeCampesino!;
 export default function InformesCampesino() {
   const [datosAgrupados, setDatosAgrupados] = useState<InformeVenta[]>([]);
   const [datosCargados, setDatosCargados] = useState(false);
+  const [errorVisible, setErrorVisible] = useState(false);
+  const [mensajeError, setMensajeError] = useState("");
+
+  const mostrarError = (mensaje: string) => {
+    setMensajeError(mensaje);
+    setErrorVisible(true);
+    setTimeout(() => setErrorVisible(false), 3000);
+  };
 
   useEffect(() => {
     const obtenerDatos = async () => {
       try {
         const token = await AsyncStorage.getItem("accessToken");
         if (!token) {
-          console.error("Token no encontrado");
+          mostrarError("Token no encontrado");
           return;
         }
 
@@ -47,9 +56,7 @@ export default function InformesCampesino() {
             const data = await response.json();
 
             if (Array.isArray(data)) {
-              // Agrupar productos por nombre
               const agrupados: { [key: string]: InformeVenta } = {};
-
               data.forEach((item) => {
                 if (agrupados[item.nombreProducto]) {
                   agrupados[item.nombreProducto].cantidad += item.cantidad;
@@ -61,7 +68,6 @@ export default function InformesCampesino() {
 
               setDatosAgrupados(Object.values(agrupados));
             } else {
-              // No es un array, es un mensaje como "No has realizado ninguna venta"
               setDatosAgrupados([]);
             }
           } else {
@@ -69,14 +75,15 @@ export default function InformesCampesino() {
             if (texto.includes("No has realizado ninguna venta")) {
               setDatosAgrupados([]);
             } else {
-              console.error("Respuesta inesperada:", texto);
+              mostrarError("Respuesta inesperada del servidor");
             }
           }
         } else {
-          console.error("Error al obtener informe:", await response.text());
+          const texto = await response.text();
+          mostrarError("Error al obtener informe: " + texto);
         }
-      } catch (error) {
-        console.error("Error de red:", error);
+      } catch (error: any) {
+        mostrarError("Error de red: " + error.message);
       } finally {
         setDatosCargados(true);
       }
@@ -85,39 +92,43 @@ export default function InformesCampesino() {
     obtenerDatos();
   }, []);
 
-  const labels = datosAgrupados.map((d) => d.nombreProducto);
-  const cantidades = datosAgrupados.map((d) => d.cantidad);
+  // 🎨 Colores para el gráfico circular
+  const colores = ["#4CAF50", "#81C784", "#66BB6A", "#388E3C", "#2E7D32", "#1B5E20", "#AED581", "#A5D6A7"];
+
+  // 🟢 Datos para el PieChart
+  const datosPie = datosAgrupados.map((item, index) => ({
+    name: item.nombreProducto,
+    quantity: item.cantidad,
+    color: colores[index % colores.length],
+    legendFontColor: "#333",
+    legendFontSize: 12,
+  }));
 
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Informes de Ventas</Text>
 
-      {/* Mostrar gráfico solo si hay datos */}
-      {datosAgrupados.length > 0 && (
-        <BarChart
-          data={{
-            labels,
-            datasets: [{ data: cantidades }],
-          }}
+      {/* Gráfico circular */}
+      {datosAgrupados.length > 0 ? (
+        <PieChart
+          data={datosPie}
           width={Dimensions.get("window").width - 20}
           height={220}
-          yAxisLabel=""
-          yAxisSuffix=" u."
-          fromZero
           chartConfig={{
-            backgroundColor: "#4CAF50",
-            backgroundGradientFrom: "#4CAF50",
-            backgroundGradientTo: "#388E3C",
-            decimalPlaces: 0,
-            color: (opacity = 1) => `rgba(255,255,255,${opacity})`,
-            labelColor: () => "#fff",
+            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
           }}
-          style={{
-            marginVertical: 8,
-            borderRadius: 8,
-          }}
+          accessor="quantity"
+          backgroundColor="transparent"
+          paddingLeft="15"
+          absolute
         />
+      ) : (
+        <View style={styles.graficoVacio}>
+          <View style={styles.circuloVacio} />
+          <Text style={styles.textoVacio}>Sin datos para mostrar</Text>
+        </View>
       )}
+
 
       {/* Tabla */}
       <View style={{ marginTop: 20 }}>
@@ -156,6 +167,21 @@ export default function InformesCampesino() {
           )}
         />
       </View>
+
+      {/* Modal de Error */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={errorVisible}
+        onRequestClose={() => setErrorVisible(false)}
+      >
+        <View style={modalStyles.centeredView}>
+          <View style={modalStyles.modalView}>
+            <ErrorAnimation />
+            <Text style={modalStyles.successText}>{mensajeError}</Text>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -194,6 +220,56 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
   },
   dataCell: {
+    textAlign: "center",
+  },
+  graficoVacio: {
+    height: 220,
+    width: Dimensions.get("window").width - 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginVertical: 8,
+  },
+  circuloVacio: {
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    borderWidth: 3,
+    borderColor: "#4CAF50",
+    backgroundColor: "#fff",
+  },
+
+  textoVacio: {
+    marginTop: 12,
+    fontSize: 16,
+    color: "#4CAF50",
+    fontWeight: "600",
+  },
+
+});
+
+const modalStyles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalView: {
+    width: "80%",
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  successText: {
+    marginTop: 15,
+    fontSize: 18,
+    fontWeight: "bold",
     textAlign: "center",
   },
 });

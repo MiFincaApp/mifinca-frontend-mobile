@@ -4,29 +4,33 @@ import type { ExpoConfig } from '@expo/config';
 const config: ExpoConfig = {
   name: "MiFincaApp",
   slug: "MiFincaApp",
+  scheme: "mifinca",
   version: "1.0.0",
   orientation: "portrait",
-  icon: "./assets/images/icon.png",
-  scheme: "myapp",
-  userInterfaceStyle: "automatic",
+  icon: "./assets/images/logos/logo.png",
+  userInterfaceStyle: "light",
   splash: {
-    image: "./assets/images/splash.png",
+    image: "./assets/images/logos/logo.png",
     resizeMode: "contain",
-    backgroundColor: "#ffffff"
+    backgroundColor: "#ffffff",
   },
+  updates: {
+    fallbackToCacheTimeout: 0,
+  },
+  assetBundlePatterns: ["**/*"],
   ios: {
-    supportsTablet: true
+    supportsTablet: true,
   },
   android: {
     adaptiveIcon: {
-      foregroundImage: "./assets/images/adaptive-icon.png",
-      backgroundColor: "#ffffff"
-    }
+      foregroundImage: "./assets/images/logos/LogoMiFinca.png",
+      backgroundColor: "#ffffff",
+    },
+    package: "com.mifincaapp",
+    permissions: [],
   },
   web: {
-    bundler: "metro",
-    output: "static",
-    favicon: "./assets/images/favicon.png"
+    favicon: "./assets/images/logos/LogoMiFincaApp.png",
   },
   plugins: [
     "expo-router",
@@ -56,6 +60,9 @@ const config: ExpoConfig = {
     apiTokenUrl: process.env.EXPO_PUBLIC_API_URL_TOKEN,
     apiLogoutUrl: process.env.EXPO_PUBLIC_API_URL_LOGOUT,
     apiPerfilUrl: process.env.EXPO_PUBLIC_API_URL_PERFIL,
+
+    // Apis ventas
+    apiUrlVentas: process.env.EXPO_PUBLIC_API_URL_VENTAS,
   }
 };
 

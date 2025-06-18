@@ -298,6 +298,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",           // Centrar horizontalmente
     flexDirection: "column",        // Alinear íconos en columna
     marginLeft: 10,
+    marginRight: 10,
   },
   botonCrear: {
     backgroundColor: "#4CAF50",

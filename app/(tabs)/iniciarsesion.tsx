@@ -5,6 +5,7 @@ import Constants from 'expo-constants';
 import Header from '@/components/header/header';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import ErrorAnimation from "@/components/screens/Error";
 const API_URL = Constants.expoConfig?.extra?.apiLoginUrl!;
 
 export default function IniciarSesion() {
@@ -13,6 +14,15 @@ export default function IniciarSesion() {
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const router = useRouter();
+
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const mostrarError = (mensaje: string) => {
+    setErrorMessage(mensaje);
+    setShowErrorModal(true);
+    setTimeout(() => setShowErrorModal(false), 3000); // Oculta el modal luego de 3s
+  };
 
   const handleUserTypeSelection = (tipo: "COMPRADOR" | "CAMPESINO") => {
     setModalVisible(false);
@@ -23,6 +33,11 @@ export default function IniciarSesion() {
   };
 
   const iniciar = async () => {
+    if (!username.trim() || !password.trim()) {
+      mostrarError("Debes ingresar usuario y contraseña");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -66,7 +81,8 @@ export default function IniciarSesion() {
         // Para otros errores, mostramos mensaje del backend o genérico
         const mensajeError =
           (data && (data.error || data.mensaje)) || "Credenciales incorrectas";
-        throw new Error(mensajeError);
+        mostrarError(mensajeError);
+        return;
       }
 
       // Si la respuesta es OK, parseamos tokens
@@ -86,7 +102,8 @@ export default function IniciarSesion() {
       setPassword("");
     } catch (error: any) {
       console.error("Error:", error);
-      Alert.alert("Error", error.message || "Hubo un problema al iniciar sesión");
+      setErrorMessage(error.message || "Hubo un problema al iniciar sesión");
+      setShowErrorModal(true);
     } finally {
       setLoading(false);
     }
@@ -162,6 +179,21 @@ export default function IniciarSesion() {
               >
                 <Text style={styles.modalButtonCancelText}>Cancelar</Text>
               </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        {/* Modal de error animado */}
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={showErrorModal}
+          onRequestClose={() => setShowErrorModal(false)}
+        >
+            <View style={modalStyles.centeredView}>
+                <View style={modalStyles.modalView}>
+                <ErrorAnimation />
+              <Text style={modalStyles.successText}>{errorMessage}</Text>
             </View>
           </View>
         </Modal>
@@ -313,5 +345,31 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "500",
     letterSpacing: 0.4,
+  },
+});
+
+const modalStyles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalView: {
+    width: '80%',
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  successText: {
+    marginTop: 15,
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });

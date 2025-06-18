@@ -5,6 +5,8 @@ import Header from "@/components/header/header";
 import Constants from "expo-constants";
 import SuccessAnimation from "@/components/screens/SuccessAnimation";
 
+import ErrorAnimation from "@/components/screens/Error";
+
 const API_URL = Constants.expoConfig?.extra?.apiRegisterUrl!;
 
 export default function register() {
@@ -15,6 +17,10 @@ export default function register() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);  // Estado modal
 
@@ -58,7 +64,9 @@ export default function register() {
           jsonData = JSON.parse(rawText);
         } catch (jsonError) {
           console.error("Error parseando JSON:", jsonError);
-          Alert.alert("Error", "La respuesta del servidor no es un JSON válido.");
+          setErrorMessage("La respuesta del servidor no es un JSON válido.");
+          setShowErrorModal(true);
+          setTimeout(() => setShowErrorModal(false), 3000);
           return;
         }
       }
@@ -86,12 +94,17 @@ export default function register() {
           (jsonData && jsonData.message) ||
           rawText ||
           "No se pudo registrar";
+
         console.error("Error al registrar:", message);
-        Alert.alert("Error", message);
+        setErrorMessage(message);
+        setShowErrorModal(true);
+        setTimeout(() => setShowErrorModal(false), 3000);
       }
     } catch (error) {
       console.error("Error de red:", error);
-      Alert.alert("Error de red", "Intente nuevamente más tarde.");
+      setErrorMessage("Error de red. Intente nuevamente más tarde.");
+      setShowErrorModal(true);
+      setTimeout(() => setShowErrorModal(false), 3000);
     }
   };
 
@@ -171,6 +184,22 @@ export default function register() {
             </View>
           </View>
         </Modal>
+
+        {/* Modal de error */}
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={showErrorModal}
+          onRequestClose={() => setShowErrorModal(false)}
+        >
+          <View style={modalStyles.centeredView}>
+            <View style={modalStyles.modalView}>
+              <ErrorAnimation />
+              <Text style={modalStyles.successText}>{errorMessage}</Text>
+            </View>
+          </View>
+        </Modal>
+
       </>
     );
   }

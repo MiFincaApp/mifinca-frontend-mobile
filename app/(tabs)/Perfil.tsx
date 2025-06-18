@@ -5,6 +5,7 @@ import Header from '@/components/header/header';
 import Constants from 'expo-constants';
 import { useRouter } from "expo-router";
 
+import ErrorAnimation from "@/components/screens/Error";
 import { MaterialCommunityIcons, FontAwesome5, Ionicons } from "@expo/vector-icons";
 
 const API_URL_PERFIL = Constants.expoConfig?.extra?.apiPerfilUrl!;
@@ -23,6 +24,16 @@ const Perfil = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [fincaNombre, setFincaNombre] = useState("");
   const [fincaUbicacion, setFincaUbicacion] = useState("");
+
+  const [errorVisible, setErrorVisible] = useState(false);
+  const [mensajeError, setMensajeError] = useState("");
+
+  const mostrarError = (mensaje: string) => {
+    setMensajeError(mensaje);
+    setErrorVisible(true);
+    setTimeout(() => setErrorVisible(false), 3000); // Oculta el modal luego de 3s
+  };
+
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -80,6 +91,11 @@ const Perfil = () => {
       const token = await AsyncStorage.getItem("accessToken");
       if (!token) return;
 
+      if (!fincaNombre.trim() || !fincaUbicacion.trim()) {
+        mostrarError("Debe completar todos los campos");
+        return;
+      }
+
       const response = await fetch(`${API_URL_CREAR_FINCA}`, {
         method: "POST",
         headers: {
@@ -93,7 +109,10 @@ const Perfil = () => {
         }),
       });
 
-      if (!response.ok) throw new Error("Error al crear la finca");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Error al crear la finca");
+      }
 
       const data = await response.json();
       setFinca(data);
@@ -101,7 +120,7 @@ const Perfil = () => {
       setFincaNombre("");
       setFincaUbicacion("");
     } catch (err) {
-      Alert.alert("Error", "No se pudo crear la finca");
+      mostrarError("No se pudo crear la finca");
       console.error(err);
     }
   };
@@ -200,16 +219,13 @@ const Perfil = () => {
             </Pressable>
           </View>
 
-          <Text style={styles.sectionDescription}>
-            Aquí puede ver el resumen de todas sus compras
-          </Text>
+          <View style={styles.iconWithDescription}>
+            <FontAwesome5 name="file-invoice-dollar" style={styles.iconStyle} />
+            <Text style={styles.sectionDescription}>
+              Aquí puede ver el resumen de todas sus compras
+            </Text>
+          </View>
 
-          <FontAwesome5
-            name="file-invoice-dollar"
-            size={60}
-            color="#4CAF50"
-            style={{ marginTop: 10 }}
-          />
         </View>
       )}
 
@@ -256,6 +272,21 @@ const Perfil = () => {
           </View>
         </View>
       </Modal>
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={errorVisible}
+        onRequestClose={() => setErrorVisible(false)}
+      >
+        <View style={modalStyles.centeredView}>
+          <View style={modalStyles.modalView}>
+            <ErrorAnimation />
+            <Text style={modalStyles.successText}>{mensajeError}</Text>
+          </View>
+        </View>
+      </Modal>
+
     </ScrollView>
   );
 };
@@ -332,7 +363,20 @@ const styles = StyleSheet.create({
   sectionDescription: {
     fontSize: 14,
     color: "#4e944f",
+    flex: 1,
+    flexWrap: "wrap",
   },
+  iconWithDescription: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  iconStyle: {
+    fontSize: 30,
+    color: "#4CAF50",
+    marginRight: 10,
+  },
+
   fincaBox: {
     flexDirection: "row",
     alignItems: "center",
@@ -402,6 +446,33 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
 });
+
+const modalStyles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalView: {
+    width: '80%',
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  successText: {
+    marginTop: 15,
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+});
+
 
 
 export default Perfil;

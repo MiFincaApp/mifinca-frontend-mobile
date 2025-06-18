@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { ScrollView, View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { CreditCard } from 'lucide-react-native';
 import Header from '@/components/header/header';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import Constants from 'expo-constants';
 import { useCarrito } from '@/components/context/carrito/carritocontext';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const API_URL = Constants.expoConfig?.extra?.apiUrlProductDetail!;
 
@@ -34,11 +35,20 @@ const DescripcionProducto = () => {
   const { id } = useLocalSearchParams();
   const [producto, setProducto] = useState<ProductoAPI | null>(null);
   const [cantidad, setCantidad] = useState<number>(1);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+
 
   useEffect(() => {
     if (id) {
       fetchProducto(id.toString());
     }
+
+    const getToken = async () => {
+      const token = await AsyncStorage.getItem("accessToken");
+      setAccessToken(token);
+    };
+
+    getToken();
   }, [id]);
 
   const fetchProducto = async (productoId: string) => {
@@ -132,10 +142,50 @@ const DescripcionProducto = () => {
             <Text style={styles.textoBotonAgregar}>Agregar al carrito</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.buyNowButton}>
-            <CreditCard size={18} color="#fff" style={styles.buttonIcon} />
-            <Text style={styles.buttonText}>Pagar</Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.botonPagar,
+            !accessToken && { backgroundColor: "#ccc", borderColor: "#ccc" },
+          ]}
+          onPress={async () => {
+            if (!producto || !accessToken) return;
+
+            const total = producto.precio * cantidad;
+
+            // Guardar productos en AsyncStorage
+            await AsyncStorage.setItem(
+              "productos_para_pago",
+              JSON.stringify([
+                {
+                  productoId: producto.idProducto,
+                  nombre: producto.nombre,
+                  cantidad,
+                  precioUnitario: producto.precio,
+                },
+              ])
+            );
+
+            // Redirigir con solo el total como parámetro
+            router.push({
+              pathname: "/metododepago",
+              params: {
+                total: total.toFixed(2),
+              },
+            });
+          }}
+          disabled={!accessToken}
+        >
+          <CreditCard size={18} color={accessToken ? "#4CAF50" : "#777"} style={styles.buttonIcon} />
+          <Text style={[
+            styles.botonPagarTexto,
+            !accessToken && { color: "#777" }
+          ]}>
+            Pagar
+          </Text>
+        </TouchableOpacity>
+
+
+
       </View>
     </ScrollView>
   );
@@ -244,7 +294,29 @@ const styles = StyleSheet.create({
   },
   buttonIcon: {
     marginRight: 8,
-  }
+  },
+  botonPagar: {
+    flexDirection: "row",
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: "#E8F5E9", // Verde muy claro
+    borderColor: "#4CAF50",
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 18,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  botonPagarTexto: {
+    color: "#4CAF50",
+    fontSize: 16,
+    fontWeight: "600",
+    letterSpacing: 0.5,
+  },
+
 });
 
 export default DescripcionProducto;

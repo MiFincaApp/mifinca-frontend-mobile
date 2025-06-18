@@ -96,6 +96,11 @@ const index = () => {
       <Header />
       <Carrusel />
 
+      <TouchableOpacity onPress={cerrarSesion} style={{ alignSelf: 'flex-end', marginRight: 20, marginBottom: 10 }}>
+        <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold' }}>Cerrar sesión</Text>
+
+      </TouchableOpacity>
+
       <Text style={styles.titulo}>Catálogo de Productos</Text>
       <View style={styles.catalogo}>
       {productos.length > 0 ? (

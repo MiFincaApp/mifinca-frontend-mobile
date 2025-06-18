@@ -1,8 +1,10 @@
-import { View, Text, FlatList, Dimensions, StyleSheet } from "react-native";
-import { BarChart } from "react-native-chart-kit";
+import { View, Text, FlatList, Dimensions, StyleSheet, Modal } from "react-native";
+import { PieChart } from "react-native-chart-kit";
 import { useEffect, useState } from "react";
 import Constants from "expo-constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import ErrorAnimation from "@/components/screens/Error";
 
 // 🔹 Interfaz de los datos del informe del comprador
 interface InformeCompra {
@@ -19,15 +21,19 @@ interface InformeCompra {
 const API_URL_COMPRADOR = Constants.expoConfig?.extra?.apiUrlInformeComprador!;
 
 export default function InformesComprador() {
-  const [datos, setDatos] = useState<InformeCompra[]>([]);
+  const [datosAgrupados, setDatosAgrupados] = useState<InformeCompra[]>([]);
   const [datosCargados, setDatosCargados] = useState(false);
+  const [errorVisible, setErrorVisible] = useState(false);
+  const [mensajeError, setMensajeError] = useState("");
 
   useEffect(() => {
     const obtenerDatos = async () => {
       try {
         const token = await AsyncStorage.getItem("accessToken");
         if (!token) {
-          console.error("Token no encontrado");
+          setMensajeError("Token no encontrado");
+          setErrorVisible(true);
+          setTimeout(() => setErrorVisible(false), 3000);
           return;
         }
 
@@ -40,18 +46,47 @@ export default function InformesComprador() {
           },
         });
 
+        const contentType = response.headers.get("Content-Type");
+
         if (response.ok) {
-          const data = await response.json();
-          if (Array.isArray(data)) {
-            setDatos(data);
+          if (contentType?.includes("application/json")) {
+            const data = await response.json();
+
+            if (Array.isArray(data)) {
+              const agrupados: { [key: string]: InformeCompra } = {};
+              data.forEach((item) => {
+                if (agrupados[item.nombreProducto]) {
+                  agrupados[item.nombreProducto].cantidad += item.cantidad;
+                  agrupados[item.nombreProducto].precioTotal += item.precioTotal;
+                } else {
+                  agrupados[item.nombreProducto] = { ...item };
+                }
+              });
+
+              setDatosAgrupados(Object.values(agrupados));
+            } else {
+              setDatosAgrupados([]);
+            }
           } else {
-            setDatos([]);
+            const texto = await response.text();
+            if (texto.includes("No has realizado ninguna compra")) {
+              setDatosAgrupados([]);
+            } else {
+              setMensajeError("Respuesta inesperada del servidor");
+              setErrorVisible(true);
+              setTimeout(() => setErrorVisible(false), 3000);
+            }
           }
         } else {
-          console.error("Error al obtener informe:", await response.text());
+          const errorText = await response.text();
+          setMensajeError("Error al obtener informe: " + errorText);
+          setErrorVisible(true);
+          setTimeout(() => setErrorVisible(false), 3000);
         }
-      } catch (error) {
-        console.error("Error de red:", error);
+      } catch (error: any) {
+        setMensajeError("Error de red: " + error.message);
+        setErrorVisible(true);
+        setTimeout(() => setErrorVisible(false), 3000);
       } finally {
         setDatosCargados(true);
       }
@@ -60,68 +95,68 @@ export default function InformesComprador() {
     obtenerDatos();
   }, []);
 
-  const labels = datos.map((d) => d.nombreProducto);
-  const cantidades = datos.map((d) => d.cantidad);
+  // 🎨 Colores para el gráfico
+  const colores = ["#4CAF50", "#81C784", "#66BB6A", "#388E3C", "#2E7D32", "#1B5E20", "#AED581", "#A5D6A7"];
+
+  // 🟢 Formato para PieChart
+  const datosPie = datosAgrupados.map((item, index) => ({
+    name: item.nombreProducto,
+    quantity: item.cantidad,
+    color: colores[index % colores.length],
+    legendFontColor: "#333",
+    legendFontSize: 12,
+  }));
 
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Informes de Compras</Text>
 
-      {/* Mostrar gráfico solo si hay datos */}
-      {datos.length > 0 && (
-        <BarChart
-          data={{
-            labels,
-            datasets: [{ data: cantidades }],
-          }}
+      {/* Gráfico circular */}
+      {datosAgrupados.length > 0 ? (
+        <PieChart
+          data={datosPie}
           width={Dimensions.get("window").width - 20}
           height={220}
-          yAxisLabel=""
-          yAxisSuffix=" u."
-          fromZero
           chartConfig={{
-            backgroundColor: "#4CAF50",
-            backgroundGradientFrom: "#4CAF50",
-            backgroundGradientTo: "#388E3C",
-            decimalPlaces: 0,
-            color: (opacity = 1) => `rgba(255,255,255,${opacity})`,
-            labelColor: () => "#fff",
+            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
           }}
-          style={{
-            marginVertical: 8,
-            borderRadius: 8,
-          }}
+          accessor="quantity"
+          backgroundColor="transparent"
+          paddingLeft="15"
+          absolute
         />
-      )}
+      ) : (
+        <View style={styles.graficoVacio}>
+          <View style={styles.circuloVacio} />
+          <Text style={styles.textoVacio}>Sin datos para mostrar</Text>
+        </View>
+      )
+    }
+
 
       {/* Tabla */}
       <View style={{ marginTop: 20 }}>
         <Text style={styles.subtitulo}>Detalle de Compras:</Text>
-
-        {/* Encabezado */}
         <View style={styles.headerRow}>
           <Text style={[styles.headerCell, { flex: 2 }]}>Producto</Text>
           <Text style={[styles.headerCell, { flex: 1 }]}>Cantidad</Text>
           <Text style={[styles.headerCell, { flex: 1 }]}>Total</Text>
         </View>
 
-        {/* Filas de datos o mensaje de sin productos */}
         <FlatList
           data={
-            datos.length === 0 && datosCargados
-              ? [
-                  {
-                    id: 0,
-                    productoId: 0,
-                    nombreProducto: "Sin productos",
-                    cantidad: 0,
-                    precioTotal: 0,
-                    compradorId: 0,
-                    vendedorId: 0,
-                    fechaCompra: "",
-                  },
-                ]
-              : datos
+            datosAgrupados.length === 0 && datosCargados
+              ? [{
+                  id: 0,
+                  productoId: 0,
+                  nombreProducto: "Sin productos",
+                  cantidad: 0,
+                  precioTotal: 0,
+                  compradorId: 0,
+                  vendedorId: 0,
+                  fechaCompra: "",
+                }]
+              : datosAgrupados
           }
           keyExtractor={(item) => item.nombreProducto + item.id}
           renderItem={({ item }) => (
@@ -133,6 +168,21 @@ export default function InformesComprador() {
           )}
         />
       </View>
+
+      {/* Modal de Error */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={errorVisible}
+        onRequestClose={() => setErrorVisible(false)}
+      >
+        <View style={modalStyles.centeredView}>
+          <View style={modalStyles.modalView}>
+            <ErrorAnimation />
+            <Text style={modalStyles.successText}>{mensajeError}</Text>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -171,6 +221,56 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
   },
   dataCell: {
+    textAlign: "center",
+  },
+  graficoVacio: {
+    height: 220,
+    width: Dimensions.get("window").width - 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginVertical: 8,
+  },
+  circuloVacio: {
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    borderWidth: 3,
+    borderColor: "#4CAF50",
+    backgroundColor: "#fff",
+  },
+
+  textoVacio: {
+    marginTop: 12,
+    fontSize: 16,
+    color: "#4CAF50",
+    fontWeight: "600",
+  },
+
+});
+
+const modalStyles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalView: {
+    width: "80%",
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  successText: {
+    marginTop: 15,
+    fontSize: 18,
+    fontWeight: "bold",
     textAlign: "center",
   },
 });
