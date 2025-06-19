@@ -11,12 +11,10 @@ export default function SuccessAnimationWeb() {
         loop={false}
         style={{ width: 100, height: 100 }}
       />
-      <Text style={styles.text}>¡Registro Exitoso!</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { justifyContent: 'center', alignItems: 'center' },
-  text: { marginTop: 20, fontSize: 18, fontWeight: 'bold', textAlign: 'center' },
 });

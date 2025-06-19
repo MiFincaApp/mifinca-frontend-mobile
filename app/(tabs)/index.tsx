@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, Alert} from "react-native";
+import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from 'expo-router';
 import Header from '@/components/header/header';
@@ -15,6 +15,7 @@ interface Producto {
   precio: number;
   imagenUrl: string;
   fincaNombre: string;
+  cantidad: number; // ✅ agregado para filtrar por stock
 }
 
 const Carrusel = () => {
@@ -41,7 +42,7 @@ const Carrusel = () => {
   );
 };
 
-const index = () => {
+const Index = () => {
   const [productos, setProductos] = useState<Producto[]>([]);
   const router = useRouter();
 
@@ -61,8 +62,8 @@ const index = () => {
 
         const data: Producto[] = await response.json();
 
-        // Ordenar y limitar
-        const ordenados = data.sort((a, b) => a.precio - b.precio);
+        const disponibles = data.filter(p => p.cantidad > 0); // ✅ solo productos con stock
+        const ordenados = disponibles.sort((a, b) => a.precio - b.precio);
         const limitados = ordenados.slice(0, 6);
 
         setProductos(limitados);
@@ -96,16 +97,11 @@ const index = () => {
       <Header />
       <Carrusel />
 
-      <TouchableOpacity onPress={cerrarSesion} style={{ alignSelf: 'flex-end', marginRight: 20, marginBottom: 10 }}>
-        <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold' }}>Cerrar sesión</Text>
-
-      </TouchableOpacity>
-
       <Text style={styles.titulo}>Catálogo de Productos</Text>
       <View style={styles.catalogo}>
-      {productos.length > 0 ? (
-        <View style={styles.grid}>
-          {productos.map((producto) => (
+        {productos.length > 0 ? (
+          <View style={styles.grid}>
+            {productos.map((producto) => (
               <TouchableOpacity
                 key={producto.idProducto}
                 style={styles.producto}
@@ -117,14 +113,14 @@ const index = () => {
                 <Text style={styles.texto}>Producido en: {producto.fincaNombre}</Text>
               </TouchableOpacity>
             ))}
-        </View>
-      ) : (
-        <View style={styles.estadoContainer}>
-          <Cargando />
-          <Text style={styles.loading}>Cargando...</Text>
-        </View>
-      )}
-    </View>
+          </View>
+        ) : (
+          <View style={styles.estadoContainer}>
+            <Cargando />
+            <Text style={styles.loading}>No hay productos disponibles en este momento.</Text>
+          </View>
+        )}
+      </View>
     </ScrollView>
   );
 };
@@ -214,5 +210,4 @@ const styles = StyleSheet.create({
   },
 });
 
-
-export default index;
+export default Index;

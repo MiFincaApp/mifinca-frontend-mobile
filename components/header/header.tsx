@@ -57,6 +57,7 @@ const Header: React.FC = () => {
         if (data.username) {
           setUsername(data.username);
         }
+
       } catch (err) {
         console.error("Error al obtener el rol:", err);
       }
@@ -554,3 +555,7 @@ const styles = StyleSheet.create({
 );
 
 export default Header;
+
+function setEmail(email: any) {
+  throw new Error("Function not implemented.");
+}

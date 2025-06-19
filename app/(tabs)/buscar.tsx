@@ -16,6 +16,7 @@ interface Producto {
   precio: number;
   imagenUrl: string;
   fincaNombre: string;
+  cantidad: number; // ✅ agregado para filtrar por stock
 }
 
 const BuscarScreen = () => {
@@ -50,6 +51,7 @@ const BuscarScreen = () => {
           setProductos([]);
         } else {
           const data = JSON.parse(text);
+          const disponibles = data.filter((p: Producto) => p.cantidad > 0); // ✅ filtrar cantidad > 0
           setProductos(data);
         }
 

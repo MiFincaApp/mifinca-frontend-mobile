@@ -9,22 +9,19 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
 
-import useTokenRefresher from "@/hooks/useTokenRefresher";
-
-import { useColorScheme } from "@/hooks/useColorScheme";
 import { CarritoProvider } from "@/components/context/carrito/carritocontext";
-
+import { useColorScheme } from "@/hooks/useColorScheme";
+import useTokenRefresher from "@/hooks/useTokenRefresher";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  useTokenRefresher();
+
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
-
-  useTokenRefresher();
-  // Hook para refrescar el token cada 5 minutos
 
   useEffect(() => {
     if (loaded) {
@@ -32,9 +29,7 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
-  if (!loaded) {
-    return null;
-  }
+  if (!loaded) return null;
 
   return (
     <CarritoProvider>

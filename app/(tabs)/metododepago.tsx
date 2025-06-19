@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Linking, Image, ScrollView } from "react-native"
-import { useLocalSearchParams, useRouter } from "expo-router";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Header from "@/components/header/header";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import Constants from "expo-constants";
-import { useCarrito } from '@/components/context/carrito/carritocontext';
-
-const API_URL = Constants.expoConfig?.extra?.apiUrlVentas!;
+import Header from "@/components/header/header";
+import CheckboxSimple from "@/components/ui/CheckboxSimple"; // ✅ importa tu nuevo checkbox
 
 interface Producto {
   productoId: number;
@@ -15,11 +21,14 @@ interface Producto {
   precioUnitario: number;
 }
 
-export default function MetodoPago() {
-  const params = useLocalSearchParams();
-  const router = useRouter();
-  const { limpiarCarrito } = useCarrito();
+const API_URL = Constants.expoConfig?.extra?.apiUrlWompi;
+
+export default function MetodoPagoNequi() {
+  const [checked1, setChecked1] = useState(false);
+  const [checked2, setChecked2] = useState(false);
   const [productos, setProductos] = useState<Producto[]>([]);
+  const router = useRouter();
+  const params = useLocalSearchParams();
   const total = params.total ? parseFloat(params.total as string) : 0;
 
   useEffect(() => {
@@ -32,104 +41,44 @@ export default function MetodoPago() {
         console.error("❌ Error cargando productos:", error);
       }
     };
-
     cargarProductos();
   }, []);
 
-  // 🔄 Escucha redirecciones de Wompi una vez montado
-  useEffect(() => {
-    const handleDeepLink = async ({ url }: { url: string }) => {
-      if (url.includes("factura-exitosa")) {
-        try {
-          const token = await AsyncStorage.getItem("accessToken");
-          if (!token) {
-            Alert.alert("Error", "No se encontró el token de autenticación");
-            return;
-          }
-
-          if (productos.length === 0) {
-            Alert.alert("Error", "No hay productos para registrar");
-            return;
-          }
-
-          const venta = { total, productos };
-
-          const response = await fetch(API_URL, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-              'USER-MIFINCA-CLIENT': 'mifincaapp-mobile-android',
-            },
-            body: JSON.stringify(venta),
-          });
-
-          if (!response.ok) {
-            const errorText = await response.text();
-            console.error("❌ Error registrando venta:", errorText);
-            Alert.alert("Error", errorText);
-            return;
-          }
-
-          limpiarCarrito(); // ✅ Limpia contexto
-          await AsyncStorage.removeItem("productos_para_pago"); // ✅ Limpia local
-
-          // ✅ Redirigir a factura
-          router.push({
-            pathname: "/factura",
-            params: {
-              total: total.toString(),
-              productos: JSON.stringify(productos),
-            },
-          });
-        } catch (error) {
-          console.error("❌ Error al procesar pago:", error);
-          Alert.alert("Error", "Error al guardar la venta.");
-        }
-      }
-    };
-
-    const sub = Linking.addEventListener("url", handleDeepLink);
-    return () => sub.remove();
-  }, []);
-
-  const handlePagarConWompi = async () => {
+  const handleContinuarPago = async () => {
     try {
-      const urlWompi = `https://checkout.wompi.co/p/?public-key=TU_PUBLIC_KEY&currency=COP&amount-in-cents=${Math.round(
-        total * 100
-      )}&reference=mi-finca-${Date.now()}&redirect-url=mifincaapp://factura-exitosa`;
+      const response = await fetch(`${API_URL}/aceptacion`);
+      const data = await response.json();
 
-      const supported = await Linking.canOpenURL(urlWompi);
-      if (supported) {
-        Linking.openURL(urlWompi);
-      } else {
-        Alert.alert("Error", "No se pudo abrir el enlace de pago.");
+      if (!data.acceptanceToken || !data.personalToken) {
+        Alert.alert("Error", "No se pudo obtener el token de aceptación");
+        return;
       }
+
+      await AsyncStorage.setItem("acceptanceToken", data.acceptanceToken);
+      await AsyncStorage.setItem("personalToken", data.personalToken);
+
+      router.push({
+        pathname: "/nequi",
+        params: { total: total.toString() },
+      });
     } catch (error) {
-      console.error("❌ Error al redirigir a Wompi:", error);
-      Alert.alert("Error", "No se pudo procesar el pago.");
+      console.error("❌ Error al obtener aceptación:", error);
+      Alert.alert("Error", "Error al iniciar el flujo de pago.");
     }
   };
+
+  const ambosAceptados = checked1 && checked2;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Header />
-
       <View style={styles.content}>
         <View style={styles.card}>
-          <Image
-            source={require("@/assets/images/logos/logo.png")}
-            style={styles.logo}
-          />
-
-          <Text style={styles.mensaje}>
-            ¡Estás a un paso de apoyar a nuestros campesinos! 🌱
-          </Text>
-
+          <Image source={require("@/assets/images/logos/logo.png")} style={styles.logo} />
+          <Text style={styles.mensaje}>¡Estás a un paso de apoyar a nuestros campesinos! 🌱</Text>
           <View style={styles.separator} />
 
           <Text style={styles.title}>Resumen de tu compra</Text>
-
           {productos.length > 0 ? (
             <View style={styles.productosWrapper}>
               {productos.map((prod, index) => (
@@ -142,14 +91,31 @@ export default function MetodoPago() {
           ) : (
             <Text style={{ color: "#999", marginBottom: 10 }}>No hay productos</Text>
           )}
-
-
-
-          <Text style={styles.total}>Total a pagar:</Text>
+          <Text style={styles.total}>Total:</Text>
           <Text style={styles.totalMonto}>${total.toFixed(2)}</Text>
 
-          <TouchableOpacity style={styles.botonPagar} onPress={handlePagarConWompi}>
-            <Text style={styles.botonPagarTexto}>Pagar con Wompi</Text>
+          {/* ✅ Checkboxes bien colocados */}
+          <View style={styles.checkboxRow}>
+            <CheckboxSimple checked={checked1} onToggle={() => setChecked1(!checked1)} />
+            <Text style={styles.texto}>
+              Acepto la autorización para la administración de datos personales
+            </Text>
+          </View>
+
+          <View style={styles.checkboxRow}>
+            <CheckboxSimple checked={checked2} onToggle={() => setChecked2(!checked2)} />
+            <Text style={styles.texto}>
+              Acepto haber leído los reglamentos y la política de privacidad para hacer el pago
+            </Text>
+          </View>
+
+          {/* ✅ Botón bien ubicado */}
+          <TouchableOpacity
+            style={[styles.boton, !ambosAceptados && { opacity: 0.5 }]}
+            disabled={!ambosAceptados}
+            onPress={handleContinuarPago}
+          >
+            <Text style={styles.botonTexto}>Continuar con tu pago</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -158,41 +124,24 @@ export default function MetodoPago() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    padding: 10,
-  },
-  content: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
+  container: { flexGrow: 1, backgroundColor: "#fff", padding: 10 },
+  content: { padding: 20, marginTop: 20, flex: 1 },
   card: {
     backgroundColor: "#fff",
     width: "100%",
     borderRadius: 20,
     padding: 25,
     alignItems: "center",
-
-    // 🟢 Sombra sutil pero visible
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 8, // Android
-
-    // 🟢 Borde sutil adicional
+    elevation: 8,
     borderColor: "#e0e0e0",
     borderWidth: 1,
+    marginBottom: 30,
   },
-  logo: {
-    width: 100,
-    height: 100,
-    resizeMode: "contain",
-    marginBottom: 15,
-  },
+  logo: { width: 100, height: 100, resizeMode: "contain", marginBottom: 15 },
   mensaje: {
     fontSize: 16,
     color: "#4CAF50",
@@ -206,37 +155,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#e0e0e0",
     marginVertical: 20,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 8,
-    color: "#333",
-  },
-  total: {
-    fontSize: 18,
-    color: "#333",
-  },
+  title: { fontSize: 20, fontWeight: "bold", marginBottom: 8, color: "#333" },
+  total: { fontSize: 18, color: "#333" },
   totalMonto: {
     fontSize: 26,
     fontWeight: "bold",
     color: "#4CAF50",
     marginBottom: 30,
-  },
-  botonPagar: {
-    backgroundColor: "#4CAF50",
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 5,
-  },
-  botonPagarTexto: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
   },
   lineaProducto: {
     width: "100%",
@@ -246,19 +171,35 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     borderColor: "#ddd",
   },
-  nombreSimple: {
-    fontSize: 16,
-    color: "#333",
-  },
-  cantidadSimple: {
-    fontSize: 16,
-    color: "#333",
-    fontWeight: "bold",
-  },
-  productosWrapper: {
-    width: "100%",
+  nombreSimple: { fontSize: 16, color: "#333" },
+  cantidadSimple: { fontSize: 16, color: "#333", fontWeight: "bold" },
+  productosWrapper: { width: "100%", marginBottom: 15 },
+  checkboxRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
     marginBottom: 15,
+    width: "100%",
+    gap: 10,
   },
-
-
+  texto: {
+    flex: 1,
+    fontSize: 14,
+    color: "#333",
+    lineHeight: 20,
+  },
+  boton: {
+    backgroundColor: "#000",
+    borderRadius: 30,
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
+    width: "100%",
+  },
+  botonTexto: {
+    color: "#B9F227",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
 });

@@ -25,7 +25,7 @@ export default function InformesComprador() {
   const [datosCargados, setDatosCargados] = useState(false);
   const [errorVisible, setErrorVisible] = useState(false);
   const [mensajeError, setMensajeError] = useState("");
-
+  
   useEffect(() => {
     const obtenerDatos = async () => {
       try {

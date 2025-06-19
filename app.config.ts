@@ -4,7 +4,8 @@ import type { ExpoConfig } from '@expo/config';
 const config: ExpoConfig = {
   name: "MiFincaApp",
   slug: "MiFincaApp",
-  scheme: "mifinca",
+  scheme: "mifincaapp",
+  platforms: ["android"],
   version: "1.0.0",
   orientation: "portrait",
   icon: "./assets/images/logos/logo.png",
@@ -63,6 +64,9 @@ const config: ExpoConfig = {
 
     // Apis ventas
     apiUrlVentas: process.env.EXPO_PUBLIC_API_URL_VENTAS,
+
+    // Apis Pagos
+    apiUrlWompi: process.env.EXPO_PUBLIC_API_URL_PAGOS,
   }
 };
 
