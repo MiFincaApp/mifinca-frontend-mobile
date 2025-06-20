@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, ScrollView, View, Text, Image, TouchableOpacity } from "react-native";
+import { StyleSheet, ScrollView, View, Text, Image, TouchableOpacity, Linking } from "react-native";
 import Header from '@/components/header/header';
 import { useRouter } from 'expo-router';
 
@@ -8,6 +8,10 @@ const iconw = require('@/assets/images/Redes Sociales/whatsapp.png');
 
 const Soporte = () => {
     const router = useRouter();
+
+    const handleWhatsAppContact = () => {
+        Linking.openURL("http://wa.me/+573209001661");
+    };
 
     return (
         <View style={styles.container}>
@@ -26,7 +30,7 @@ const Soporte = () => {
                         <Text style={styles.methodText}>Preguntas frecuentes</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.whatsappButton}>
+                    <TouchableOpacity style={styles.whatsappButton} onPress={handleWhatsAppContact}>
                         <Image source={iconw} style={styles.whatsappIcon} />
                         <Text style={styles.whatsappText}>Contáctanos vía WhatsApp</Text>
                     </TouchableOpacity>

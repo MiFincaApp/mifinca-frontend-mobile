@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Pressable } from "react-native";
+import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Pressable, Linking } from "react-native";
 import { useRouter } from 'expo-router';
 
 const phoneIcon = require('@/assets/images/Footer/Telefono.png');
@@ -8,9 +8,13 @@ const supportIcon = require('@/assets/images/Footer/Soporte.png');
 const Footer: React.FC = () => {
     const router = useRouter();
 
+    const handleWhatsAppContact = () => {
+        Linking.openURL("http://wa.me/+573209001661");
+    };
+
     return (
         <View style={styles.footer}>
-            <TouchableOpacity style={styles.contactInfo}>
+            <TouchableOpacity style={styles.contactInfo} onPress={handleWhatsAppContact}>
                 <Image source={phoneIcon} style={styles.footerIcon} />
                 <Text>Contáctanos</Text>
             </TouchableOpacity>
