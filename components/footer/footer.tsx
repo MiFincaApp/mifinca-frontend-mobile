@@ -12,6 +12,10 @@ const Footer: React.FC = () => {
         Linking.openURL("http://wa.me/+573209001661");
     };
 
+    const handleGoToSupport = () => {
+        router.push('/soporte');
+    };
+
     return (
         <View style={styles.footer}>
             <TouchableOpacity style={styles.contactInfo} onPress={handleWhatsAppContact}>
@@ -20,8 +24,8 @@ const Footer: React.FC = () => {
             </TouchableOpacity>
 
             <View style={styles.supportSection}>
-                <TextInput style={styles.input} placeholder="Soporte" />
-                <Pressable onPress={() => router.push('/soporte')}>
+                <Pressable style={styles.supportButton} onPress={handleGoToSupport}>
+                    <Text style={styles.supportText}>¿Necesitas Ayuda?</Text>
                     <Image source={supportIcon} style={styles.footerIcon} />
                 </Pressable>
             </View>
@@ -68,6 +72,16 @@ const styles = StyleSheet.create({
         alignItems: "center",
         gap: 5,
     },
+    supportButton: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 5, // espacio entre ícono y texto
+    },
+    supportText: {
+        fontSize: 14,
+        color: "#333",
+    },
+
 });
 
 export default Footer;

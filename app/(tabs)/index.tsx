@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   ScrollView,
   Alert,
   Modal,
+  Dimensions,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
@@ -16,6 +17,7 @@ import Constants from "expo-constants";
 import Cargando from "@/components/screens/Cargando";
 
 const API_URL = Constants.expoConfig?.extra?.apiUrlProducts!;
+const { width } = Dimensions.get("window");
 
 interface Producto {
   idProducto: number;
@@ -28,6 +30,8 @@ interface Producto {
 
 const Carrusel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [carouselWidth, setCarouselWidth] = useState(width);
+  const scrollRef = useRef<ScrollView>(null);
 
   const imagenes = [
     require("@/assets/images/carrusel/imagen1.jpg"),
@@ -37,23 +41,64 @@ const Carrusel = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % imagenes.length);
+      const nextIndex = (currentIndex + 1) % imagenes.length;
+      setCurrentIndex(nextIndex);
+      scrollRef.current?.scrollTo({ x: nextIndex * carouselWidth, animated: true });
     }, 10000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [currentIndex, carouselWidth]);
+
+  const handleScroll = (event: any) => {
+    const newIndex = Math.round(event.nativeEvent.contentOffset.x / carouselWidth);
+    setCurrentIndex(newIndex);
+  };
 
   return (
-    <View style={styles.carruselContainer}>
-      <Image source={imagenes[currentIndex]} style={styles.carruselImage} />
+    <View
+      style={styles.carruselContainer}
+      onLayout={(e) => setCarouselWidth(e.nativeEvent.layout.width)}
+    >
+      <ScrollView
+        ref={scrollRef}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+      >
+        {imagenes.map((img, index) => (
+          <Image
+            key={index}
+            source={img}
+            style={[styles.carruselImage, { width: carouselWidth }]}
+          />
+        ))}
+      </ScrollView>
+
+      {/* Indicadores */}
+      <View style={styles.indicatorOverlay}>
+        {imagenes.map((_, index) => (
+          <View
+            key={index}
+            style={[
+              styles.indicator,
+              currentIndex === index && styles.activeIndicator,
+            ]}
+          />
+        ))}
+      </View>
     </View>
   );
 };
 
 const Index = () => {
   const [productos, setProductos] = useState<Producto[]>([]);
-  const [showModal, setShowModal] = useState(false); // ← Inicialmente false
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showModal, setShowModal] = useState(false);
   const router = useRouter();
+
+  const productosPorPagina = 6;
 
   useEffect(() => {
     const checkModal = async () => {
@@ -83,9 +128,7 @@ const Index = () => {
         const data: Producto[] = await response.json();
         const disponibles = data.filter((p) => p.cantidad > 0);
         const ordenados = disponibles.sort((a, b) => a.precio - b.precio);
-        const limitados = ordenados.slice(0, 6);
-
-        setProductos(limitados);
+        setProductos(ordenados);
       } catch (error) {
         console.error("Error al cargar productos:", error);
       }
@@ -94,22 +137,42 @@ const Index = () => {
     fetchProductos();
   }, []);
 
+  const totalPaginas = Math.ceil(productos.length / productosPorPagina);
+  const inicio = (currentPage - 1) * productosPorPagina;
+  const fin = inicio + productosPorPagina;
+  const productosActuales = productos.slice(inicio, fin);
+
   const handleProductClick = (id: number | undefined) => {
     if (!id) {
       console.warn("ID de producto no válido");
       return;
     }
-    router.push({
-      pathname: "/descripcionProducto",
-      params: { id: id.toString() },
-    });
+    router.push({ pathname: "/descripcionProducto", params: { id: id.toString() } });
   };
 
-  const cerrarSesion = async () => {
-    await AsyncStorage.removeItem("accessToken");
-    await AsyncStorage.removeItem("refreshToken");
-    await AsyncStorage.removeItem("bienvenidaMostrada"); // 👈 opcional si quieres que vuelva a salir al cerrar sesión
-    Alert.alert("Sesión cerrada", "Has cerrado sesión correctamente.");
+  const renderPaginacion = () => {
+    const paginasVisibles = 3;
+    let inicio = Math.max(currentPage - 1, 1);
+    let fin = Math.min(inicio + paginasVisibles - 1, totalPaginas);
+
+    if (fin - inicio < paginasVisibles - 1) {
+      inicio = Math.max(fin - paginasVisibles + 1, 1);
+    }
+
+    const botones = [];
+    for (let i = inicio; i <= fin; i++) {
+      botones.push(
+        <TouchableOpacity
+          key={i}
+          style={[styles.paginaBoton, currentPage === i && styles.paginaBotonActivo]}
+          onPress={() => setCurrentPage(i)}
+        >
+          <Text style={[styles.paginaTexto, currentPage === i && styles.paginaTextoActivo]}>{i}</Text>
+        </TouchableOpacity>
+      );
+    }
+
+    return <View style={styles.paginacion}>{botones}</View>;
   };
 
   return (
@@ -119,18 +182,15 @@ const Index = () => {
 
       <Text style={styles.titulo}>Catálogo de Productos</Text>
       <View style={styles.catalogo}>
-        {productos.length > 0 ? (
+        {productosActuales.length > 0 ? (
           <View style={styles.grid}>
-            {productos.map((producto) => (
+            {productosActuales.map((producto) => (
               <TouchableOpacity
                 key={producto.idProducto}
                 style={styles.producto}
                 onPress={() => handleProductClick(producto.idProducto)}
               >
-                <Image
-                  source={{ uri: producto.imagenUrl }}
-                  style={styles.imagen}
-                />
+                <Image source={{ uri: producto.imagenUrl }} style={styles.imagen} />
                 <Text style={styles.nombre}>Tipo: {producto.nombre}</Text>
                 <Text style={styles.texto}>Precio: ${producto.precio} / kg</Text>
                 <Text style={styles.texto}>Producido en: {producto.fincaNombre}</Text>
@@ -145,9 +205,9 @@ const Index = () => {
             </Text>
           </View>
         )}
+        {renderPaginacion()}
       </View>
 
-      {/* Modal de Bienvenida */}
       <Modal
         animationType="fade"
         transparent={true}
@@ -242,8 +302,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ddd",
   },
   carruselImage: {
-    width: "100%",
-    height: "100%",
+    height: 200,
     resizeMode: "cover",
   },
   estadoContainer: {
@@ -294,6 +353,53 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  indicatorOverlay: {
+    position: "absolute",
+    bottom: 10,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
+  },
+  indicator: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "#ccc",
+    opacity: 0.8,
+  },
+  activeIndicator: {
+    backgroundColor: "#fff",
+    width: 12,
+    height: 12,
+  },
+  paginacion: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 10,
+    gap: 6,
+    marginBottom: 40,
+  },
+  paginaBoton: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    backgroundColor: "#fff", // Blanco por defecto
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#000", // Borde verde claro
+  },
+  paginaBotonActivo: {
+    backgroundColor: "#4CAF50", // Verde claro solo para activo
+  },
+  paginaTexto: {
+    fontSize: 16,
+    color: "#000", // Negro por defecto
+  },
+  paginaTextoActivo: {
+    color: "#fff", // Blanco cuando es activo
   },
 });
 
