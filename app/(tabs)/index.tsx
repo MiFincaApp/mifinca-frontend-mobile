@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, Alert } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  Alert,
+  Modal,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from 'expo-router';
-import Header from '@/components/header/header';
+import { useRouter } from "expo-router";
+import Header from "@/components/header/header";
 import Constants from "expo-constants";
-
 import Cargando from "@/components/screens/Cargando";
 
 const API_URL = Constants.expoConfig?.extra?.apiUrlProducts!;
@@ -15,16 +23,16 @@ interface Producto {
   precio: number;
   imagenUrl: string;
   fincaNombre: string;
-  cantidad: number; // ✅ agregado para filtrar por stock
+  cantidad: number;
 }
 
 const Carrusel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const imagenes = [
-    require('@/assets/images/carrusel/imagen1.jpg'),
-    require('@/assets/images/carrusel/imagen2.jpg'),
-    require('@/assets/images/carrusel/imagen3.jpg'),
+    require("@/assets/images/carrusel/imagen1.jpg"),
+    require("@/assets/images/carrusel/imagen2.jpg"),
+    require("@/assets/images/carrusel/imagen3.jpg"),
   ];
 
   useEffect(() => {
@@ -44,15 +52,27 @@ const Carrusel = () => {
 
 const Index = () => {
   const [productos, setProductos] = useState<Producto[]>([]);
+  const [showModal, setShowModal] = useState(false); // ← Inicialmente false
   const router = useRouter();
+
+  useEffect(() => {
+    const checkModal = async () => {
+      const yaMostrado = await AsyncStorage.getItem("bienvenidaMostrada");
+      if (!yaMostrado) {
+        setShowModal(true);
+        await AsyncStorage.setItem("bienvenidaMostrada", "true");
+      }
+    };
+    checkModal();
+  }, []);
 
   useEffect(() => {
     const fetchProductos = async () => {
       try {
         const response = await fetch(API_URL, {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'USER-MIFINCA-CLIENT': 'mifincaapp-mobile-android',
+            "USER-MIFINCA-CLIENT": "mifincaapp-mobile-android",
           },
         });
 
@@ -61,8 +81,7 @@ const Index = () => {
         }
 
         const data: Producto[] = await response.json();
-
-        const disponibles = data.filter(p => p.cantidad > 0); // ✅ solo productos con stock
+        const disponibles = data.filter((p) => p.cantidad > 0);
         const ordenados = disponibles.sort((a, b) => a.precio - b.precio);
         const limitados = ordenados.slice(0, 6);
 
@@ -77,11 +96,11 @@ const Index = () => {
 
   const handleProductClick = (id: number | undefined) => {
     if (!id) {
-      console.warn('ID de producto no válido');
+      console.warn("ID de producto no válido");
       return;
     }
     router.push({
-      pathname: '/descripcionProducto',
+      pathname: "/descripcionProducto",
       params: { id: id.toString() },
     });
   };
@@ -89,6 +108,7 @@ const Index = () => {
   const cerrarSesion = async () => {
     await AsyncStorage.removeItem("accessToken");
     await AsyncStorage.removeItem("refreshToken");
+    await AsyncStorage.removeItem("bienvenidaMostrada"); // 👈 opcional si quieres que vuelva a salir al cerrar sesión
     Alert.alert("Sesión cerrada", "Has cerrado sesión correctamente.");
   };
 
@@ -107,7 +127,10 @@ const Index = () => {
                 style={styles.producto}
                 onPress={() => handleProductClick(producto.idProducto)}
               >
-                <Image source={{ uri: producto.imagenUrl }} style={styles.imagen} />
+                <Image
+                  source={{ uri: producto.imagenUrl }}
+                  style={styles.imagen}
+                />
                 <Text style={styles.nombre}>Tipo: {producto.nombre}</Text>
                 <Text style={styles.texto}>Precio: ${producto.precio} / kg</Text>
                 <Text style={styles.texto}>Producido en: {producto.fincaNombre}</Text>
@@ -117,10 +140,35 @@ const Index = () => {
         ) : (
           <View style={styles.estadoContainer}>
             <Cargando />
-            <Text style={styles.loading}>No hay productos disponibles en este momento.</Text>
+            <Text style={styles.loading}>
+              No hay productos disponibles en este momento.
+            </Text>
           </View>
         )}
       </View>
+
+      {/* Modal de Bienvenida */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={showModal}
+        onRequestClose={() => setShowModal(false)}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalTitle}>Bienvenido a MiFincaApp</Text>
+            <Text style={styles.modalText}>
+              Para realizar pagos debes tener inicio de sesión.
+            </Text>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => setShowModal(false)}
+            >
+              <Text style={styles.modalButtonText}>Entendido</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -180,11 +228,6 @@ const styles = StyleSheet.create({
     marginBottom: 2,
     textAlign: "center",
   },
-  precio: {
-    fontSize: 14,
-    color: "#666",
-    textAlign: "center",
-  },
   loading: {
     fontSize: 16,
     color: "#999",
@@ -204,9 +247,53 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   estadoContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginTop: 40,
+  },
+
+  // Modal
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+  },
+  modalView: {
+    width: "85%",
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 25,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 15,
+    textAlign: "center",
+    color: "#333",
+  },
+  modalText: {
+    fontSize: 16,
+    color: "#555",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  modalButton: {
+    backgroundColor: "#28a745",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  modalButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 

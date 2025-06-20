@@ -66,24 +66,26 @@ export default function IniciarSesion() {
       }
 
       if (!response.ok) {
-        // Aquí detectamos error 500 con mensaje específico
-        if (
-          response.status === 500 &&
-          data &&
-          data.error ===
-            "Ya tienes una sesión activa en este tipo de cliente: MOVIL"
-        ) {
-          throw new Error(
-            "No puedes tener más de dos sesiones móviles activas. Por favor, cierra sesión en otro dispositivo."
-          );
-        }
+      // Log para depuración
+      console.log("Status:", response.status);
+      console.log("Data error:", data?.error);
 
-        // Para otros errores, mostramos mensaje del backend o genérico
-        const mensajeError =
-          (data && (data.error || data.mensaje)) || "Credenciales incorrectas";
-        mostrarError(mensajeError);
-        return;
+      // Error específico detectado con includes
+      let mensajeError = "Ha ocurrido un error";
+      
+      if (response.status === 500) {
+        mensajeError =
+          "No puedes tener más de dos sesiones móviles activas. Por favor, cierra sesión en otro dispositivo.";
+      } else {
+        mensajeError =
+          data?.error || data?.mensaje || "Credenciales incorrectas";
       }
+
+      // Mostrar modal de error animado (ya lo usas así)
+      mostrarError(mensajeError);
+      return;
+    }
+
 
       // Si la respuesta es OK, parseamos tokens
       const accessToken = data?.token;

@@ -7,6 +7,7 @@ import Constants from 'expo-constants';
 
 const API_URL_PERFIL = Constants.expoConfig?.extra?.apiPerfilUrl!;
 const API_URL_LOGOUT = Constants.expoConfig?.extra?.apiLogoutUrl!;
+const API_URL = Constants.expoConfig?.extra?.apiTokenUrl!;
 
 const icon = require("@/assets/images/logos/logo.png");
 import { FontAwesome, Feather } from '@expo/vector-icons';
@@ -28,12 +29,13 @@ const Header: React.FC = () => {
   useEffect(() => {
     const fetchUserRole = async () => {
       try {
-        const token = await AsyncStorage.getItem('accessToken');
-        if (!token) return;
+        let token = await AsyncStorage.getItem('accessToken');
+        const refreshToken = await AsyncStorage.getItem('refreshToken');
+        if (!token || !refreshToken) return;
 
         setIsLoggedIn(true);
 
-        const response = await fetch(`${API_URL_PERFIL}`, {
+        let response = await fetch(`${API_URL_PERFIL}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -41,8 +43,33 @@ const Header: React.FC = () => {
           },
         });
 
-        if (!response.ok) throw new Error("Error al obtener el perfil");
+        // ❌ Si token expiró o no fue válido, intenta renovar
+        if (!response.ok) {
+          const refreshed = await refreshAccessToken();
+          if (refreshed) {
+            // 🔁 Reintenta con nuevo token
+            token = await AsyncStorage.getItem('accessToken');
+            response = await fetch(`${API_URL_PERFIL}`, {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'USER-MIFINCA-CLIENT': 'mifincaapp-mobile-android',
+              },
+            });
+          }
+        }
 
+        // ❌ Si aún no es válido, cerrar sesión
+        if (!response.ok) {
+          await AsyncStorage.removeItem("accessToken");
+          await AsyncStorage.removeItem("refreshToken");
+          setIsLoggedIn(false);
+          setRol(null);
+          router.replace('/');
+          return;
+        }
+
+        // ✅ Si llegó aquí, tenemos respuesta válida
         const data = await response.json();
         if (data.roles && data.roles.length > 0) {
           setRol(data.roles[0].nombreRol);
@@ -50,13 +77,8 @@ const Header: React.FC = () => {
           setRol(null);
         }
 
-        if (data.nombre) {
-          setNombre(data.nombre);
-        }
-
-        if (data.username) {
-          setUsername(data.username);
-        }
+        if (data.nombre) setNombre(data.nombre);
+        if (data.username) setUsername(data.username);
 
       } catch (err) {
         console.error("Error al obtener el rol:", err);
@@ -65,6 +87,40 @@ const Header: React.FC = () => {
 
     fetchUserRole();
   }, []);
+
+
+  const refreshAccessToken = async (): Promise<boolean> => {
+    const accessToken = await AsyncStorage.getItem("accessToken");
+    const refreshToken = await AsyncStorage.getItem("refreshToken");
+    if (!refreshToken || !accessToken) return false;
+
+    try {
+      const response = await fetch(`${API_URL}/auth/refresh`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${accessToken}`, // aunque esté expirado
+          "Content-Type": "application/json",
+          "USER-MIFINCA-CLIENT": "mifincaapp-mobile-android",
+        },
+        body: JSON.stringify({ refreshToken }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        await AsyncStorage.setItem("accessToken", data.accessToken);
+        await AsyncStorage.setItem("refreshToken", data.refreshToken);
+
+        return true;
+      } else {
+        console.warn("No se pudo renovar el accessToken:", response.status);
+        return false;
+      }
+    } catch (error) {
+      console.error("Error al renovar accessToken:", error);
+      return false;
+    }
+  };
 
   const logout = async () => {
     try {
