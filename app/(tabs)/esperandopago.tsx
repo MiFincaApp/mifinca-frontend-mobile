@@ -19,157 +19,140 @@ const API_URL_VENTAS = Constants.expoConfig?.extra?.apiUrlVentas;
 
 export default function EsperandoPago() {
   const router = useRouter();
-  const [estado, setEstado] = useState<string>("PENDING");
   const [success, setSuccess] = useState(false);
   const [declined, setDeclined] = useState(false);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    let timeout: NodeJS.Timeout;
+    let isMounted = true; // para evitar llamadas tras desmontaje
 
     const verificarEstado = async () => {
+      if (!isMounted) return;
+
       const idTransaccion = await AsyncStorage.getItem("idTransaccion");
       const productosJSON = await AsyncStorage.getItem("productos_para_pago");
       const cliente = await AsyncStorage.getItem("cliente");
-
-      const productos = productosJSON ? JSON.parse(productosJSON) : [];
       const totalStr = await AsyncStorage.getItem("total_para_pago");
       const total = totalStr ? parseFloat(totalStr) : 0;
+      const productos = productosJSON ? JSON.parse(productosJSON) : [];
 
       if (!idTransaccion || !cliente) {
         Alert.alert("Error", "Faltan datos para verificar el estado del pago.");
         return;
       }
 
-      interval = setInterval(async () => {
-        try {
-          const res = await fetch(`${API_URL}/transaccion/${idTransaccion}`);
-          const data = await res.json();
+      try {
+        const res = await fetch(`${API_URL}/transaccion/${idTransaccion}`);
+        const data = await res.json();
 
-          if (data.estado === "APPROVED") {
-            clearInterval(interval);
-            clearTimeout(timeout);
-            setSuccess(true);
+        if (data.estado === "APPROVED") {
+          setSuccess(true);
 
-            const token = await AsyncStorage.getItem("accessToken");
-            if (!token) {
-              Alert.alert("Error", "Token no encontrado");
-              return;
-            }
-
-            const productosFiltrados = productos.map((p: any) => ({
-              productoId: p.productoId,
-              cantidad: p.cantidad,
-              precioUnitario: p.precioUnitario,
-            }));
-
-            const venta = { total, productos: productosFiltrados };
-
-            const ventaRes = await fetch(`${API_URL_VENTAS}`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-                "USER-MIFINCA-CLIENT": "mifincaapp-mobile-android",
-              },
-              body: JSON.stringify(venta),
-            });
-
-            if (!ventaRes.ok) {
-              const error = await ventaRes.text();
-              Alert.alert("Error al guardar venta", error);
-              return;
-            }
-
-            await AsyncStorage.multiRemove([
-              "productos_para_pago",
-              "idTransaccion",
-              "cliente_para_pago",
-              "total_para_pago",
-            ]);
-
-            setTimeout(() => {
-              router.replace({
-                pathname: "/factura",
-                params: {
-                  total: total.toString(),
-                  productos: JSON.stringify(productos),
-                  cliente,
-                  estado: "aceptado",
-                },
-              });
-            }, 2000);
-          } else if (data.estado === "DECLINED") {
-            clearInterval(interval);
-            clearTimeout(timeout);
-            setDeclined(true);
-            setTimeout(() => {
-              router.replace({
-                pathname: "/factura",
-                params: {
-                  total: total.toString(),
-                  productos: JSON.stringify(productos),
-                  cliente,
-                  estado: "rechazado",
-                },
-              });
-            }, 3000);
+          const token = await AsyncStorage.getItem("accessToken");
+          if (!token) {
+            Alert.alert("Error", "Token no encontrado");
+            return;
           }
-        } catch (error) {
-          console.log("Error al verificar estado:", error);
-        }
-      }, 5000);
 
-      timeout = setTimeout(() => {
-        clearInterval(interval);
-        setDeclined(true);
-        setTimeout(() => {
-          router.replace({
-            pathname: "/factura",
-            params: {
-              total: total.toString(),
-              productos: JSON.stringify(productos),
-              cliente,
-              estado: "rechazado",
+          const productosFiltrados = productos.map((p: any) => ({
+            productoId: p.productoId,
+            cantidad: p.cantidad,
+            precioUnitario: p.precioUnitario,
+          }));
+
+          const venta = { total, productos: productosFiltrados };
+
+          const ventaRes = await fetch(`${API_URL_VENTAS}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+              "USER-MIFINCA-CLIENT": "mifincaapp-mobile-android",
             },
+            body: JSON.stringify(venta),
           });
-        }, 3000);
-      }, 120000);
+
+          if (!ventaRes.ok) {
+            const error = await ventaRes.text();
+            Alert.alert("Error al guardar venta", error);
+            return;
+          }
+
+          await AsyncStorage.multiRemove([
+            "productos_para_pago",
+            "idTransaccion",
+            "cliente_para_pago",
+            "total_para_pago",
+          ]);
+
+          setTimeout(() => {
+            if (!isMounted) return;
+            router.replace({
+              pathname: "/factura",
+              params: {
+                total: total.toString(),
+                productos: JSON.stringify(productos),
+                cliente,
+                estado: "aceptado",
+              },
+            });
+          }, 2000);
+        } else if (data.estado === "DECLINED") {
+          setDeclined(true);
+          setTimeout(() => {
+            if (!isMounted) return;
+            router.replace({
+              pathname: "/factura",
+              params: {
+                total: total.toString(),
+                productos: JSON.stringify(productos),
+                cliente,
+                estado: "rechazado",
+              },
+            });
+          }, 3000);
+        } else {
+          // ⏱ Espera 5 segundos y vuelve a verificar
+          setTimeout(verificarEstado, 5000);
+        }
+      } catch (error) {
+        console.log("❌ Error al verificar estado:", error);
+        // Reintentar tras 5s si hay error
+        setTimeout(verificarEstado, 5000);
+      }
     };
 
     verificarEstado();
 
     return () => {
-      clearInterval(interval);
-      clearTimeout(timeout);
+      isMounted = false; // limpia al desmontar
     };
   }, []);
 
   return (
     <View style={styles.container}>
-        <Header />
-            <Modal transparent animationType="fade" visible>
-                <View style={styles.modalContainer}>
-                <View style={styles.modalContent}>
-                    {success ? (
-                    <>
-                        <SuccessAnimation />
-                        <Text style={styles.modalText}>Pago aprobado</Text>
-                    </>
-                    ) : declined ? (
-                    <>
-                        <ErrorAnimation />
-                        <Text style={styles.modalText}>Pago rechazado</Text>
-                    </>
-                    ) : (
-                    <>
-                        <LoadingAnimation />
-                        <Text style={styles.modalText}>Esperando confirmación de Nequi...</Text>
-                    </>
-                    )}
-                </View>
-                </View>
-            </Modal>
+      <Header />
+      <Modal transparent animationType="fade" visible>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            {success ? (
+              <>
+                <SuccessAnimation />
+                <Text style={styles.modalText}>Pago aprobado</Text>
+              </>
+            ) : declined ? (
+              <>
+                <ErrorAnimation />
+                <Text style={styles.modalText}>Pago rechazado</Text>
+              </>
+            ) : (
+              <>
+                <LoadingAnimation />
+                <Text style={styles.modalText}>Esperando confirmación de Nequi...</Text>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
