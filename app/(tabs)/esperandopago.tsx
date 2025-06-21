@@ -34,11 +34,6 @@ export default function EsperandoPago() {
     const total = totalStr ? parseFloat(totalStr) : 0;
     const productos = productosJSON ? JSON.parse(productosJSON) : [];
 
-    console.log("Verificando estado de la transacción:", idTransaccion);
-    console.log("Productos:", productos);
-    console.log("Cliente:", cliente);
-    console.log("Total:", total);
-
     if (!idTransaccion) {
       Alert.alert("Error", "Faltan datos para verificar el estado del pago.");
       return;
