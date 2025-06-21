@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -22,11 +22,11 @@ const API_URL_VENTAS = Constants.expoConfig?.extra?.apiUrlVentas;
 export default function EsperandoPago() {
   const router = useRouter();
   const { recarga } = useLocalSearchParams();
+  const guardandoVenta = useRef(false);
   const [success, setSuccess] = useState(false);
   const [declined, setDeclined] = useState(false);
 
   const verificarEstado = useCallback(async () => {
-
     const idTransaccion = await AsyncStorage.getItem("idTransaccion");
     const productosJSON = await AsyncStorage.getItem("productos_para_pago");
     const cliente = await AsyncStorage.getItem("cliente");
@@ -34,7 +34,12 @@ export default function EsperandoPago() {
     const total = totalStr ? parseFloat(totalStr) : 0;
     const productos = productosJSON ? JSON.parse(productosJSON) : [];
 
-    if (!idTransaccion || !cliente) {
+    console.log("Verificando estado de la transacción:", idTransaccion);
+    console.log("Productos:", productos);
+    console.log("Cliente:", cliente);
+    console.log("Total:", total);
+
+    if (!idTransaccion) {
       Alert.alert("Error", "Faltan datos para verificar el estado del pago.");
       return;
     }
@@ -44,6 +49,9 @@ export default function EsperandoPago() {
       const data = await res.json();
 
       if (data.estado === "APPROVED") {
+        if (guardandoVenta.current) return; // si ya está guardando, salir
+        guardandoVenta.current = true; // bloquear futuras ejecuciones
+
         setSuccess(true);
 
         const token = await AsyncStorage.getItem("accessToken");
@@ -59,6 +67,7 @@ export default function EsperandoPago() {
         }));
 
         const venta = { total, productos: productosFiltrados };
+        console.log("Guardando venta:", venta);
 
         const ventaRes = await fetch(`${API_URL_VENTAS}`, {
           method: "POST",
@@ -73,6 +82,7 @@ export default function EsperandoPago() {
         if (!ventaRes.ok) {
           const error = await ventaRes.text();
           Alert.alert("Error al guardar venta", error);
+          guardandoVenta.current = false;
           return;
         }
 
