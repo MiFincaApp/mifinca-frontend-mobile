@@ -9,7 +9,7 @@ export default function SuccessAnimationWeb() {
         source={require('../../assets/animations/success.json')}
         autoPlay
         loop={false}
-        style={{ width: 100, height: 100 }}
+        style={{ width: 200, height: 200 }}
       />
     </View>
   );

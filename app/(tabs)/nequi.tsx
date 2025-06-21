@@ -55,6 +55,25 @@ export default function Nequi() {
   };
 
   const handlePagar = async () => {
+    const { numeroDocumento, celular, correoCliente } = form;
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!numeroDocumento || numeroDocumento.length < 6) {
+      Alert.alert("Documento inválido", "El número de documento debe tener al menos 6 dígitos.");
+      return;
+    }
+
+    if (!celular || celular.length !== 10) {
+      Alert.alert("Celular inválido", "El número de celular debe tener 10 dígitos.");
+      return;
+    }
+
+    if (!emailRegex.test(correoCliente)) {
+      Alert.alert("Correo inválido", "Ingresa un correo electrónico válido.");
+      return;
+    }
+
     const camposRequeridos = Object.entries(form).filter(
       ([_, v]) => v.trim() === ""
     );
@@ -100,7 +119,10 @@ export default function Nequi() {
       await AsyncStorage.setItem("total_pago", total.toString());
 
       // Redirigir a pantalla que valida el estado
-      router.push("/esperandopago");
+      router.replace({
+        pathname: "/esperandopago",
+        params: { t: Date.now().toString() }, // 👈 fuerza recarga
+      });
 
     } catch (error) {
       console.error("❌ Error en pago Nequi:", error);
@@ -122,34 +144,48 @@ export default function Nequi() {
           </Text>
 
           {Object.keys(form).map((key) => {
-            if (key === "tipoDocumento") {
-              return (
-                <View key={key} style={styles.pickerContainer}>
-                  <Picker
-                    selectedValue={form.tipoDocumento}
-                    onValueChange={(itemValue) =>
-                      handleChange("tipoDocumento", itemValue)
-                    }
-                    style={styles.picker}
-                  >
-                    <Picker.Item label="CC" value="CC" />
-                  </Picker>
-                </View>
-              );
-            }
-
+          if (key === "tipoDocumento") {
             return (
-              <TextInput
-                key={key}
-                style={styles.input}
-                placeholder={key.replace(/([A-Z])/g, " $1").toUpperCase()}
-                value={form[key as keyof typeof form]}
-                onChangeText={(text) =>
-                  handleChange(key as keyof typeof form, text)
-                }
-              />
+              <View key={key} style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={form.tipoDocumento}
+                  onValueChange={(itemValue) =>
+                    handleChange("tipoDocumento", itemValue)
+                  }
+                  style={styles.picker}
+                >
+                  <Picker.Item label="CC" value="CC" />
+                </Picker>
+              </View>
             );
-          })}
+          }
+
+          const isNumericField = key === "numeroDocumento" || key === "celular";
+          const isEmailField = key === "correoCliente";
+
+          return (
+            <TextInput
+              key={key}
+              style={styles.input}
+              placeholder={key.replace(/([A-Z])/g, " $1").toUpperCase()}
+              value={form[key as keyof typeof form]}
+              keyboardType={
+                isNumericField ? "numeric" : isEmailField ? "email-address" : "default"
+              }
+              autoCapitalize={isEmailField ? "none" : "sentences"}
+              onChangeText={(text) => {
+                if (isNumericField) {
+                  const soloNumeros = text.replace(/[^0-9]/g, "");
+                  handleChange(key as keyof typeof form, soloNumeros);
+                } else if (isEmailField) {
+                  handleChange(key as keyof typeof form, text.toLowerCase());
+                } else {
+                  handleChange(key as keyof typeof form, text);
+                }
+              }}
+            />
+          );
+        })}
 
           <Text style={styles.totalLabel}>Total a pagar:</Text>
           <Text style={styles.totalAmount}>${total.toFixed(2)}</Text>
