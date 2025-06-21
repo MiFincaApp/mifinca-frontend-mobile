@@ -66,9 +66,6 @@ export default function IniciarSesion() {
       }
 
       if (!response.ok) {
-      // Log para depuración
-      console.log("Status:", response.status);
-      console.log("Data error:", data?.error);
 
       // Error específico detectado con includes
       let mensajeError = "Ha ocurrido un error";
@@ -373,5 +370,6 @@ const modalStyles = StyleSheet.create({
     marginTop: 15,
     fontSize: 18,
     fontWeight: "bold",
+    textAlign: "center",
   },
 });
