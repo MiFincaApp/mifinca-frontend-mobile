@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   Alert,
+  Linking,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter, useLocalSearchParams } from "expo-router";
@@ -98,14 +99,40 @@ export default function MetodoPagoNequi() {
           <View style={styles.checkboxRow}>
             <CheckboxSimple checked={checked1} onToggle={() => setChecked1(!checked1)} />
             <Text style={styles.texto}>
-              Acepto la autorización para la administración de datos personales
+              Acepto la autorización para la administración de{" "}
+              <Text
+                style={styles.linkText}
+                onPress={() =>
+                  Linking.openURL("https://wompi.com/assets/downloadble/autorizacion-administracion-datos-personales.pdf")
+                }
+              >
+                datos personales
+              </Text>
             </Text>
           </View>
 
           <View style={styles.checkboxRow}>
             <CheckboxSimple checked={checked2} onToggle={() => setChecked2(!checked2)} />
             <Text style={styles.texto}>
-              Acepto haber leído los reglamentos y la política de privacidad para hacer el pago
+              Acepto haber leído los{" "}
+              <Text
+                style={styles.linkText}
+                onPress={() =>
+                  Linking.openURL("https://wompi.com/assets/downloadble/reglamento-Usuarios-Colombia.pdf")
+                }
+              >
+                reglamentos
+              </Text>{" "}
+              y la{" "}
+              <Text
+                style={styles.linkText}
+                onPress={() =>
+                  Linking.openURL("https://wompi.com/assets/downloadble/autorizacion-administracion-datos-personales.pdf")
+                }
+              >
+                política de privacidad
+              </Text>{" "}
+              para hacer el pago
             </Text>
           </View>
 
@@ -201,5 +228,10 @@ const styles = StyleSheet.create({
     color: "#B9F227",
     fontWeight: "bold",
     fontSize: 16,
+  },
+  linkText: {
+    fontWeight: "bold",
+    textDecorationLine: "none",
+    color: "#000",
   },
 });

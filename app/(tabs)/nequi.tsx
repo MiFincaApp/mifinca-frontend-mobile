@@ -8,17 +8,14 @@ import {
   TouchableOpacity,
   Alert,
   Image,
-  Modal,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import LoadingAnimation from "@/components/screens/Cargando";
-import SuccessAnimation from "@/components/screens/SuccessAnimation";
 import Header from "@/components/header/header";
+import { Picker } from "@react-native-picker/picker";
 
 const API_URL = Constants.expoConfig?.extra?.apiUrlWompi;
-const API_URL_VENTAS = Constants.expoConfig?.extra?.apiUrlVentas;
 
 interface Producto {
   productoId: number;
@@ -32,8 +29,6 @@ export default function Nequi() {
   const router = useRouter();
   const total = params.total ? parseFloat(params.total as string) : 0;
   const [productos, setProductos] = useState<Producto[]>([]);
-  const [showModal, setShowModal] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   const [form, setForm] = useState({
     nombreCompleto: "",
@@ -97,99 +92,16 @@ export default function Nequi() {
       }
 
       const { idTransaccion } = data;
-      setShowModal(true);
 
-      const timeout = setTimeout(() => {
-        clearInterval(interval);
-        setShowModal(false);
-        router.push({
-              pathname: "/factura",
-              params: {
-                total: total.toString(),
-                productos: JSON.stringify(productos),
-                cliente: form.nombreCompleto,
-                estado: "rechazado",
-              },
-            });
-      }, 15000);
+      // Guardar datos en AsyncStorage para validación posterior
+      await AsyncStorage.setItem("idTransaccion", idTransaccion);
+      await AsyncStorage.setItem("productos_para_pago", JSON.stringify(productos));
+      await AsyncStorage.setItem("cliente", form.nombreCompleto);
+      await AsyncStorage.setItem("total_pago", total.toString());
 
-      const interval = setInterval(async () => {
-        try {
-          const estadoRes = await fetch(
-            `${API_URL}/transaccion/${idTransaccion}`
-          );
-          const estadoData = await estadoRes.json();
+      // Redirigir a pantalla que valida el estado
+      router.push("/esperandopago");
 
-          if (estadoData.estado === "APPROVED") {
-            clearInterval(interval);
-            clearTimeout(timeout); // ✅ Detiene el timeout de 15s
-            setSuccess(true);
-
-            setTimeout(async () => {
-              const token = await AsyncStorage.getItem("accessToken");
-              if (!token) {
-                Alert.alert("Error", "Token de autenticación no encontrado");
-                return;
-              }
-
-              const productosFiltrados = productos.map((p) => ({
-                productoId: p.productoId,
-                cantidad: p.cantidad,
-                precioUnitario: p.precioUnitario,
-              }));
-
-              const venta = {
-                total,
-                productos: productosFiltrados,
-              };
-
-              const ventaResponse = await fetch(`${API_URL_VENTAS}`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-                  "USER-MIFINCA-CLIENT": "mifincaapp-mobile-android",
-                },
-                body: JSON.stringify(venta),
-              });
-
-              if (!ventaResponse.ok) {
-                const errorText = await ventaResponse.text();
-                Alert.alert("Error al guardar venta", errorText);
-                return;
-              }
-
-              await AsyncStorage.removeItem("productos_para_pago");
-              setShowModal(false);
-
-              router.push({
-                pathname: "/factura",
-                params: {
-                  total: total.toString(),
-                  productos: JSON.stringify(productos),
-                  cliente: form.nombreCompleto,
-                  estado: "aceptado",
-                },
-              });
-            }, 1500);
-          } else if (estadoData.estado === "DECLINED") {
-            clearInterval(interval);
-            clearTimeout(timeout); // ✅ Detiene el timeout
-            setShowModal(false);
-            router.push({
-              pathname: "/factura",
-              params: {
-                total: total.toString(),
-                productos: JSON.stringify(productos),
-                cliente: form.nombreCompleto,
-                estado: "rechazado",
-              },
-            });
-          }
-        } catch (error) {
-          console.error("Error consultando estado:", error);
-        }
-      }, 5000);
     } catch (error) {
       console.error("❌ Error en pago Nequi:", error);
       Alert.alert("Error", "Ocurrió un error al procesar el pago.");
@@ -209,17 +121,35 @@ export default function Nequi() {
             Completa tus datos para pagar con Nequi
           </Text>
 
-          {Object.keys(form).map((key) => (
-            <TextInput
-              key={key}
-              style={styles.input}
-              placeholder={key.replace(/([A-Z])/g, " $1").toUpperCase()}
-              value={form[key as keyof typeof form]}
-              onChangeText={(text) =>
-                handleChange(key as keyof typeof form, text)
-              }
-            />
-          ))}
+          {Object.keys(form).map((key) => {
+            if (key === "tipoDocumento") {
+              return (
+                <View key={key} style={styles.pickerContainer}>
+                  <Picker
+                    selectedValue={form.tipoDocumento}
+                    onValueChange={(itemValue) =>
+                      handleChange("tipoDocumento", itemValue)
+                    }
+                    style={styles.picker}
+                  >
+                    <Picker.Item label="CC" value="CC" />
+                  </Picker>
+                </View>
+              );
+            }
+
+            return (
+              <TextInput
+                key={key}
+                style={styles.input}
+                placeholder={key.replace(/([A-Z])/g, " $1").toUpperCase()}
+                value={form[key as keyof typeof form]}
+                onChangeText={(text) =>
+                  handleChange(key as keyof typeof form, text)
+                }
+              />
+            );
+          })}
 
           <Text style={styles.totalLabel}>Total a pagar:</Text>
           <Text style={styles.totalAmount}>${total.toFixed(2)}</Text>
@@ -228,28 +158,6 @@ export default function Nequi() {
             <Text style={styles.botonTexto}>Pagar con Nequi</Text>
           </TouchableOpacity>
         </View>
-
-        <Modal animationType="fade" transparent visible={showModal}>
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              {success ? (
-                <>
-                  <SuccessAnimation />
-                  <Text style={styles.modalText}>
-                    Pago aprobado y venta registrada
-                  </Text>
-                </>
-              ) : (
-                <>
-                  <LoadingAnimation />
-                  <Text style={styles.modalText}>
-                    Confirmando el estado del pago...
-                  </Text>
-                </>
-              )}
-            </View>
-          </View>
-        </Modal>
       </ScrollView>
     </View>
   );
@@ -320,28 +228,15 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
   },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
-  },
-  modalContent: {
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    marginBottom: 12,
     backgroundColor: "#fff",
-    padding: 30,
-    borderRadius: 20,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
   },
-  modalText: {
-    marginTop: 20,
-    fontSize: 16,
-    color: "#333",
-    textAlign: "center",
-    fontWeight: "600",
+  picker: {
+    height: 50,
+    width: "100%",
   },
 });
